@@ -1,0 +1,331 @@
+{% extends 'calculator/base.html' %}
+
+{% block title %}Главная - Калькулятор стоимости владения праворульным авто{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 80px 0;
+        border-radius: 0 0 30px 30px;
+        margin-bottom: 60px;
+    }
+    
+    .hero-title {
+        font-size: 3.5rem;
+        font-weight: 800;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .hero-subtitle {
+        font-size: 1.5rem;
+        opacity: 0.9;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    
+    .feature-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        transition: transform 0.3s, box-shadow 0.3s;
+        height: 100%;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+    
+    .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 20px;
+    }
+    
+    .car-badge {
+        background: linear-gradient(45deg, #6a11cb 0%, #2575fc 100%);
+        color: white;
+        padding: 12px 20px;
+        border-radius: 25px;
+        font-weight: 600;
+        box-shadow: 0 5px 15px rgba(106, 17, 203, 0.3);
+        transition: all 0.3s;
+    }
+    
+    .car-badge:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 20px rgba(106, 17, 203, 0.4);
+    }
+    
+    .stats-section {
+        background: #f8f9fa;
+        border-radius: 20px;
+        padding: 40px;
+        margin: 60px 0;
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #667eea;
+    }
+    
+    .stat-label {
+        color: #6c757d;
+        font-size: 1.1rem;
+    }
+    
+    .cta-button {
+        background: linear-gradient(45deg, #FF416C, #FF4B2B);
+        border: none;
+        padding: 15px 40px;
+        font-size: 1.2rem;
+        font-weight: 600;
+        border-radius: 50px;
+        box-shadow: 0 10px 25px rgba(255, 65, 108, 0.3);
+        transition: all 0.3s;
+    }
+    
+    .cta-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(255, 65, 108, 0.4);
+    }
+    
+    .benefit-item {
+        padding: 15px 0;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .benefit-item:last-child {
+        border-bottom: none;
+    }
+    
+    .benefit-icon {
+        color: #667eea;
+        font-size: 1.5rem;
+        margin-right: 15px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Герой-секция -->
+<div class="hero-section text-center">
+    <div class="container">
+        <h1 class="hero-title mb-4">💰 Рассчитайте реальную стоимость владения праворульным авто</h1>
+        <p class="hero-subtitle mb-5">
+            Точно спланируйте бюджет на покупку и содержание JDM автомобиля в России. 
+            Все расходы от таможни до ежегодного ТО в одном калькуляторе.
+        </p>
+        <a href="{% url 'calculation_create' %}" class="btn btn-light btn-lg cta-button">
+            🚀 Начать расчет прямо сейчас
+        </a>
+    </div>
+</div>
+
+<!-- Секция преимуществ -->
+<div class="container">
+    <div class="row mb-5">
+        <div class="col-md-6">
+            <h2 class="mb-4">📈 Зачем нужен наш калькулятор?</h2>
+            <div class="list-group list-group-flush">
+                <div class="benefit-item d-flex align-items-center">
+                    <span class="benefit-icon">✅</span>
+                    <div>
+                        <h5 class="mb-1">Реальные цифры, а не догадки</h5>
+                        <p class="text-muted mb-0">Точный расчет по формулам РФ и статистике владельцев</p>
+                    </div>
+                </div>
+                <div class="benefit-item d-flex align-items-center">
+                    <span class="benefit-icon">💡</span>
+                    <div>
+                        <h5 class="mb-1">Учитываем все нюансы</h5>
+                        <p class="text-muted mb-0">Таможня, адаптация под РФ, специфические ремонты праворульных авто</p>
+                    </div>
+                </div>
+                <div class="benefit-item d-flex align-items-center">
+                    <span class="benefit-icon">📊</span>
+                    <div>
+                        <h5 class="mb-1">Наглядная аналитика</h5>
+                        <p class="text-muted mb-0">Графики и сравнения разных моделей</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="stats-section">
+                <h3 class="text-center mb-4">📊 Статистика пользователей</h3>
+                <div class="row text-center">
+                    <div class="col-6 mb-4">
+                        <div class="stat-number">85%</div>
+                        <div class="stat-label">Экономят на ремонтах</div>
+                    </div>
+                    <div class="col-6 mb-4">
+                        <div class="stat-number">+150</div>
+                        <div class="stat-label">Расчетов в день</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-number">2-3 года</div>
+                        <div class="stat-label">Окупаемость авто</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-number">30%</div>
+                        <div class="stat-label">Ниже рыночных цен</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Карточки функций -->
+    <h2 class="text-center mb-5">✨ Что вы можете сделать?</h2>
+    <div class="row mb-5">
+        <div class="col-md-4 mb-4">
+            <div class="card feature-card text-center h-100">
+                <div class="card-body p-4">
+                    <div class="feature-icon">🚗</div>
+                    <h4 class="card-title mb-3">Каталог авто</h4>
+                    <p class="card-text mb-4">
+                        Подробные карточки популярных праворульных моделей с техническими характеристиками, 
+                        средними ценами и отзывами владельцев.
+                    </p>
+                    <a href="{% url 'car_list' %}" class="btn btn-outline-primary btn-lg w-100">
+                        Смотреть каталог
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card feature-card text-center h-100">
+                <div class="card-body p-4">
+                    <div class="feature-icon">🧮</div>
+                    <h4 class="card-title mb-3">Расчет стоимости</h4>
+                    <p class="card-text mb-4">
+                        Точный калькулятор всех расходов на 1-5 лет вперед. 
+                        Учитываем регион, пробег, страховку и даже сезонные колебания цен.
+                    </p>
+                    <a href="{% url 'calculation_create' %}" class="btn btn-success btn-lg w-100">
+                        Рассчитать стоимость
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card feature-card text-center h-100">
+                <div class="card-body p-4">
+                    <div class="feature-icon">📈</div>
+                    <h4 class="card-title mb-3">Аналитика и сравнение</h4>
+                    <p class="card-text mb-4">
+                        Сравнивайте разные модели, стройте графики расходов, 
+                        получайте рекомендации по оптимизации бюджета.
+                    </p>
+                    <a href="{% url 'calculation_create' %}" class="btn btn-info btn-lg w-100">
+                        Сравнить авто
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Популярные модели -->
+    <div class="text-center mb-5">
+        <h2 class="mb-4">🏆 Самые популярные модели для расчета</h2>
+        <p class="lead text-muted mb-4">Выберите автомобиль или добавьте свой</p>
+        
+        <div class="row justify-content-center">
+            <div class="col-md-3 col-sm-6 mb-3">
+                <div class="car-badge p-3">
+                    🗾 Toyota Mark II
+                    <div class="small mt-1">JZX100 • 1JZ-GTE</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-3">
+                <div class="car-badge p-3">
+                    🇯🇵 Nissan Skyline
+                    <div class="small mt-1">R34 • RB26DETT</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-3">
+                <div class="car-badge p-3">
+                    🌟 Subaru Legacy
+                    <div class="small mt-1">BL5 • EJ20</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-3">
+                <div class="car-badge p-3">
+                    ⚡ Mitsubishi Lancer
+                    <div class="small mt-1">Evo • 4G63</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Призыв к действию -->
+    <div class="text-center mt-5 pt-5">
+        <h2 class="mb-4">Готовы узнать реальную стоимость?</h2>
+        <p class="lead mb-4">Пройдите 3 простых шага и получите детальный расчет на 5 лет</p>
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-4">
+                <div class="p-3">
+                    <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px; font-size: 1.5rem;">1</div>
+                    <h5 class="mt-3">Выберите авто</h5>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-3">
+                    <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px; font-size: 1.5rem;">2</div>
+                    <h5 class="mt-3">Укажите параметры</h5>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-3">
+                    <div class="rounded-circle bg-info text-white d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px; font-size: 1.5rem;">3</div>
+                    <h5 class="mt-3">Получите расчет</h5>
+                </div>
+            </div>
+        </div>
+        <a href="{% url 'calculation_create' %}" class="btn btn-dark btn-lg cta-button px-5">
+            🚀 Начать бесплатный расчет
+        </a>
+        <p class="text-muted mt-3">Никаких регистраций и подписок. Просто точные цифры.</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Анимация для карточек
+document.addEventListener('DOMContentLoaded', function() {
+    // Плавное появление элементов
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = 1;
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    });
+    
+    // Назначаем анимацию для всех карточек
+    document.querySelectorAll('.feature-card').forEach(card => {
+        card.style.opacity = 0;
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'opacity 0.5s, transform 0.5s';
+        observer.observe(card);
+    });
+    
+    // Анимация для бейджей авто
+    document.querySelectorAll('.car-badge').forEach(badge => {
+        badge.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.05) rotate(1deg)';
+        });
+        badge.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1) rotate(0)';
+        });
+    });
+});
+</script>
+{% endblock %}
