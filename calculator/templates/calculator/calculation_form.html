@@ -142,7 +142,6 @@
         margin-bottom: 10px;
     }
     
-    /* Стили для ошибок формы */
     .error-list {
         color: #dc3545;
         font-size: 0.875rem;
@@ -171,7 +170,6 @@
 {% endblock %}
 
 {% block content %}
-<!-- Шапка калькулятора -->
 <div class="calculator-header">
     <div class="container">
         <h1 class="display-4 fw-bold mb-3">🧮 Калькулятор стоимости владения</h1>
@@ -183,7 +181,6 @@
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="form-card">
-                <!-- Шаги расчета -->
                 <div class="step-indicator">
                     <div class="step active">
                         <div class="step-number">1</div>
@@ -199,11 +196,9 @@
                     </div>
                 </div>
                 
-                <!-- Форма расчета -->
                 <form method="post" novalidate>
                     {% csrf_token %}
                     
-                    <!-- Ошибки формы -->
                     {% if form.non_field_errors %}
                     <div class="alert alert-danger">
                         {% for error in form.non_field_errors %}
@@ -212,7 +207,6 @@
                     </div>
                     {% endif %}
                     
-                    <!-- Автомобиль -->
                     <div class="form-group-custom">
                         <label class="form-label-custom">
                             <i class="bi bi-car-front me-2"></i>{{ form.car.label }}
@@ -227,7 +221,6 @@
                         {% endif %}
                     </div>
                     
-                    <!-- Цена в Японии -->
                     <div class="form-group-custom">
                         <label class="form-label-custom">
                             <i class="bi bi-currency-yen me-2"></i>{{ form.purchase_price_jpy.label }}
@@ -246,7 +239,6 @@
                         <small class="text-muted">{{ form.purchase_price_jpy.help_text }}</small>
                     </div>
                     
-                    <!-- Годовой пробег -->
                     <div class="form-group-custom">
                         <label class="form-label-custom">
                             <i class="bi bi-speedometer2 me-2"></i>{{ form.annual_mileage.label }}
@@ -265,7 +257,6 @@
                         <small class="text-muted">{{ form.annual_mileage.help_text }}</small>
                     </div>
                     
-                    <!-- Срок владения -->
                     <div class="form-group-custom">
                         <label class="form-label-custom">
                             <i class="bi bi-calendar-range me-2"></i>{{ form.ownership_years.label }}
@@ -280,7 +271,6 @@
                         {% endif %}
                     </div>
                     
-                    <!-- Регион -->
                     <div class="form-group-custom">
                         <label class="form-label-custom">
                             <i class="bi bi-geo-alt me-2"></i>{{ form.region.label }}
@@ -296,13 +286,11 @@
                         <small class="text-muted">Влияет на стоимость страховки и ТО</small>
                     </div>
                     
-                    <!-- Кнопка расчета -->
                     <button type="submit" class="calculate-btn">
                         <i class="bi bi-calculator me-2"></i>Рассчитать полную стоимость
                     </button>
                 </form>
                 
-                <!-- Информационный блок -->
                 <div class="info-box">
                     <div class="info-title">
                         <i class="bi bi-info-circle me-2"></i>Что учитывается в расчете?
@@ -318,7 +306,6 @@
                 </div>
             </div>
             
-            <!-- Быстрый пример -->
             <div class="card mt-4">
                 <div class="card-body">
                     <h5 class="card-title">Пример расчета:</h5>
@@ -337,7 +324,6 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Добавляем классы к полям формы
     const inputs = document.querySelectorAll('input, select, textarea');
     inputs.forEach(input => {
         if (input.tagName === 'SELECT') {
@@ -347,9 +333,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Динамическое обновление шагов
     const steps = document.querySelectorAll('.step');
-    const form = document.querySelector('form');
     const carSelect = document.querySelector('#id_car');
     
     if (carSelect) {
@@ -362,20 +346,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Анимация полей формы
-    inputs.forEach(input => {
-        if (input.type !== 'hidden') {
-            input.addEventListener('focus', function() {
-                this.parentElement.classList.add('focused');
-            });
-            
-            input.addEventListener('blur', function() {
-                this.parentElement.classList.remove('focused');
-            });
-        }
-    });
-    
-    // Подсказка при наведении на цену
     const priceInput = document.querySelector('#id_purchase_price_jpy');
     if (priceInput) {
         priceInput.addEventListener('input', function() {
@@ -393,11 +363,9 @@ document.addEventListener('DOMContentLoaded', function() {
             hint.innerHTML = `≈ ${rub.toLocaleString('ru-RU')} рублей по текущему курсу`;
         });
         
-        // Запускаем расчет начальной подсказки
         priceInput.dispatchEvent(new Event('input'));
     }
     
-    // Подсвечиваем поля с ошибками
     const errorFields = document.querySelectorAll('.error-list');
     errorFields.forEach(errorList => {
         const field = errorList.previousElementSibling;

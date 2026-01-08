@@ -1,0 +1,297 @@
+{% extends 'calculator/base.html' %}
+
+{% block title %}Каталог праворульных автомобилей - JDM Calculator{% endblock %}
+
+{% block extra_css %}
+<style>
+    .catalog-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 60px 0;
+        border-radius: 0 0 30px 30px;
+        margin-bottom: 40px;
+    }
+    
+    .car-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        transition: all 0.3s;
+        height: 100%;
+        border: 1px solid #e0e0e0;
+    }
+    
+    .car-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+    
+    .car-image {
+        height: 200px;
+        background: linear-gradient(45deg, #f5f7fa, #c3cfe2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .car-image .placeholder {
+        font-size: 4rem;
+        color: rgba(102, 126, 234, 0.2);
+    }
+    
+    .car-brand {
+        font-weight: 700;
+        color: #333;
+        font-size: 1.2rem;
+    }
+    
+    .car-model {
+        font-weight: 600;
+        color: #667eea;
+        font-size: 1.5rem;
+    }
+    
+    .car-details {
+        padding: 20px;
+    }
+    
+    .car-spec {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .car-spec:last-child {
+        border-bottom: none;
+    }
+    
+    .spec-label {
+        color: #666;
+        font-weight: 500;
+    }
+    
+    .spec-value {
+        color: #333;
+        font-weight: 600;
+    }
+    
+    .calculate-btn {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        border: none;
+        color: white;
+        padding: 12px 25px;
+        border-radius: 25px;
+        font-weight: 600;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 15px;
+    }
+    
+    .calculate-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        color: white;
+    }
+    
+    .filter-section {
+        background: white;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        margin-bottom: 30px;
+    }
+    
+    .pagination {
+        margin-top: 40px;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: #f8f9fa;
+        border-radius: 15px;
+    }
+    
+    .empty-state-icon {
+        font-size: 4rem;
+        color: #667eea;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Шапка каталога -->
+<div class="catalog-header">
+    <div class="container">
+        <h1 class="display-5 fw-bold mb-3">🚗 Каталог праворульных автомобилей</h1>
+        <p class="lead mb-0">Выберите автомобиль для расчета стоимости владения</p>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Фильтры -->
+    <div class="filter-section">
+        <form method="get" class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">Марка</label>
+                <select name="brand" class="form-select">
+                    <option value="">Все марки</option>
+                    <option value="toyota">Toyota</option>
+                    <option value="nissan">Nissan</option>
+                    <option value="subaru">Subaru</option>
+                    <option value="mitsubishi">Mitsubishi</option>
+                    <option value="honda">Honda</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Тип топлива</label>
+                <select name="fuel_type" class="form-select">
+                    <option value="">Все</option>
+                    <option value="petrol">Бензин</option>
+                    <option value="diesel">Дизель</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Год выпуска от</label>
+                <input type="number" name="year_from" class="form-control" placeholder="2000" min="1990" max="2024">
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-funnel me-2"></i>Фильтровать
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Список автомобилей -->
+    {% if cars %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for car in cars %}
+        <div class="col">
+            <div class="car-card">
+                <div class="car-image">
+                    <div class="placeholder">
+                        <i class="bi bi-car-front"></i>
+                    </div>
+                </div>
+                <div class="car-details">
+                    <div class="car-brand">{{ car.get_brand_display }}</div>
+                    <div class="car-model mb-3">{{ car.model }}</div>
+                    
+                    <div class="car-spec">
+                        <span class="spec-label">Годы выпуска:</span>
+                        <span class="spec-value">{{ car.year_from }} - {{ car.year_to }}</span>
+                    </div>
+                    <div class="car-spec">
+                        <span class="spec-label">Объем двигателя:</span>
+                        <span class="spec-value">{{ car.engine_volume }} л</span>
+                    </div>
+                    <div class="car-spec">
+                        <span class="spec-label">Топливо:</span>
+                        <span class="spec-value">{{ car.get_fuel_type_display }}</span>
+                    </div>
+                    <div class="car-spec">
+                        <span class="spec-label">Расход:</span>
+                        <span class="spec-value">{{ car.fuel_consumption }} л/100км</span>
+                    </div>
+                    
+                    <a href="{% url 'calculation_create' %}?car={{ car.id }}" class="calculate-btn w-100 text-center">
+                        <i class="bi bi-calculator me-2"></i>Рассчитать стоимость
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Пагинация -->
+    {% if page_obj.has_other_pages %}
+    <nav class="pagination justify-content-center">
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+            {% endif %}
+            
+            {% for i in page_obj.paginator.page_range %}
+                {% if page_obj.number == i %}
+                <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ i }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
+                </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+    {% else %}
+    <!-- Состояние пустого списка -->
+    <div class="empty-state">
+        <div class="empty-state-icon">
+            <i class="bi bi-car-front"></i>
+        </div>
+        <h3 class="mb-3">Автомобили не найдены</h3>
+        <p class="text-muted mb-4">Попробуйте изменить параметры фильтрации или добавьте автомобили через админ-панель.</p>
+        <a href="/admin/calculator/righthandcar/add/" class="btn btn-primary me-2">
+            <i class="bi bi-plus-circle me-2"></i>Добавить автомобиль
+        </a>
+        <a href="{% url 'home' %}" class="btn btn-outline-primary">
+            <i class="bi bi-house me-2"></i>На главную
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Восстановление значений фильтров из URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const brandSelect = document.querySelector('select[name="brand"]');
+    const fuelSelect = document.querySelector('select[name="fuel_type"]');
+    const yearInput = document.querySelector('input[name="year_from"]');
+    
+    if (brandSelect && urlParams.has('brand')) {
+        brandSelect.value = urlParams.get('brand');
+    }
+    
+    if (fuelSelect && urlParams.has('fuel_type')) {
+        fuelSelect.value = urlParams.get('fuel_type');
+    }
+    
+    if (yearInput && urlParams.has('year_from')) {
+        yearInput.value = urlParams.get('year_from');
+    }
+    
+    // Подсветка выбранного автомобиля в URL
+    const carIdFromUrl = urlParams.get('car');
+    if (carIdFromUrl) {
+        const carCard = document.querySelector(`[data-car-id="${carIdFromUrl}"]`);
+        if (carCard) {
+            carCard.style.boxShadow = '0 0 0 3px #667eea';
+            carCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+});
+</script>
+{% endblock %}

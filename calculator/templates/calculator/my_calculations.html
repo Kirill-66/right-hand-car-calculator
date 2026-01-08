@@ -1,0 +1,245 @@
+{% extends 'calculator/base.html' %}
+
+{% block title %}Мои расчеты - JDM Calculator{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        margin-bottom: 25px;
+        transition: transform 0.3s;
+    }
+    
+    .dashboard-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .calculation-item {
+        border-bottom: 1px solid #eee;
+        padding: 20px 0;
+        transition: background 0.3s;
+    }
+    
+    .calculation-item:hover {
+        background: #f8f9fa;
+        border-radius: 10px;
+    }
+    
+    .calculation-item:last-child {
+        border-bottom: none;
+    }
+    
+    .car-icon {
+        font-size: 2.5rem;
+        color: #667eea;
+        margin-right: 20px;
+    }
+    
+    .total-badge {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: #f8f9fa;
+        border-radius: 15px;
+    }
+    
+    .empty-state-icon {
+        font-size: 4rem;
+        color: #667eea;
+        margin-bottom: 20px;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .stat-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 20px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin: 10px 0;
+    }
+    
+    .stat-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-5">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold mb-3">📊 Мои расчеты</h1>
+            <p class="lead text-muted">Здесь хранятся все ваши расчеты стоимости владения</p>
+        </div>
+    </div>
+    
+    <!-- Статистика -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-number">{{ total_calculations }}</div>
+                <div class="stat-label">Всего расчетов</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-number">{{ page_obj.paginator.count }}</div>
+                <div class="stat-label">На этой странице</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-number">{{ request.user.date_joined|date:"Y" }}</div>
+                <div class="stat-label">С нами с года</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <a href="{% url 'calculation_create' %}" class="btn btn-light btn-lg w-100">
+                    <i class="bi bi-plus-circle me-2"></i>Новый расчет
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Список расчетов -->
+    <div class="dashboard-card">
+        {% if page_obj.object_list %}
+            <div class="row mb-3">
+                <div class="col-6">
+                    <h5 class="mb-0">История расчетов</h5>
+                </div>
+                <div class="col-6 text-end">
+                    <small class="text-muted">Сортировка: по дате создания</small>
+                </div>
+            </div>
+            
+            {% for calculation in page_obj %}
+            <div class="calculation-item">
+                <div class="row align-items-center">
+                    <div class="col-md-1 text-center">
+                        <div class="car-icon">
+                            <i class="bi bi-car-front"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-5">
+                        <h5 class="mb-1">{{ calculation.car.brand_display }} {{ calculation.car.model }}</h5>
+                        <p class="text-muted mb-1">
+                            <i class="bi bi-calendar me-1"></i>{{ calculation.created_at|date:"d.m.Y H:i" }}
+                            <i class="bi bi-geo-alt ms-3 me-1"></i>{{ calculation.get_region_display }}
+                        </p>
+                        <small class="text-muted">
+                            <i class="bi bi-speedometer2 me-1"></i>{{ calculation.annual_mileage|floatformat:0 }} км/год
+                            <i class="bi bi-clock ms-3 me-1"></i>{{ calculation.ownership_years }} года
+                        </small>
+                    </div>
+                    
+                    <div class="col-md-3 text-center">
+                        <div class="total-badge">
+                            {% if calculation.total_cost %}
+                                {{ calculation.total_cost|floatformat:0 }} ₽
+                            {% else %}
+                                Не рассчитано
+                            {% endif %}
+                        </div>
+                        <small class="text-muted">
+                            {% if calculation.total_cost %}
+                                {{ calculation.per_year|floatformat:0 }} ₽/год
+                            {% endif %}
+                        </small>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="action-buttons justify-content-end">
+                            <a href="{% url 'calculation_result' calculation.id %}" 
+                               class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-eye me-1"></i>Просмотр
+                            </a>
+                            <a href="{% url 'calculation_delete' calculation.id %}" 
+                               class="btn btn-outline-danger btn-sm">
+                                <i class="bi bi-trash me-1"></i>Удалить
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            
+            <!-- Пагинация -->
+            {% if page_obj.has_other_pages %}
+            <nav class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+            
+        {% else %}
+            <!-- Состояние пустого списка -->
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <i class="bi bi-calculator"></i>
+                </div>
+                <h3 class="mb-3">У вас пока нет расчетов</h3>
+                <p class="text-muted mb-4">Создайте первый расчет, чтобы оценить стоимость владения автомобилем</p>
+                <a href="{% url 'calculation_create' %}" class="btn btn-primary btn-lg me-2">
+                    <i class="bi bi-plus-circle me-2"></i>Создать расчет
+                </a>
+                <a href="{% url 'car_list' %}" class="btn btn-outline-primary btn-lg">
+                    <i class="bi bi-car-front me-2"></i>Выбрать авто
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

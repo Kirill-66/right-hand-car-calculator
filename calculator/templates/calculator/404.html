@@ -1,0 +1,97 @@
+{% extends 'calculator/base.html' %}
+
+{% block title %}Страница не найдена - JDM Calculator{% endblock %}
+
+{% block extra_css %}
+<style>
+    .error-container {
+        min-height: 70vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+    
+    .error-code {
+        font-size: 8rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        line-height: 1;
+        margin-bottom: 20px;
+    }
+    
+    .error-animation {
+        font-size: 5rem;
+        margin-bottom: 30px;
+        animation: bounce 2s infinite;
+    }
+    
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="error-container">
+    <div class="container">
+        <div class="error-animation">🔍</div>
+        <div class="error-code">404</div>
+        <h1 class="display-5 fw-bold mb-3">Страница не найдена</h1>
+        <p class="lead text-muted mb-5">
+            К сожалению, запрашиваемая страница не существует или была перемещена.
+        </p>
+        
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <a href="{% url 'home' %}" class="btn btn-primary btn-lg w-100">
+                            <i class="bi bi-house me-2"></i>На главную
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="{% url 'car_list' %}" class="btn btn-outline-primary btn-lg w-100">
+                            <i class="bi bi-car-front me-2"></i>Каталог авто
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="{% url 'calculation_create' %}" class="btn btn-outline-primary btn-lg w-100">
+                            <i class="bi bi-calculator me-2"></i>Калькулятор
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-5">
+            <h5 class="mb-3">Популярные страницы:</h5>
+            <div class="d-flex justify-content-center flex-wrap gap-3">
+                <a href="{% url 'home' %}" class="badge bg-primary text-decoration-none p-3">
+                    <i class="bi bi-house me-1"></i>Главная
+                </a>
+                <a href="{% url 'car_list' %}" class="badge bg-primary text-decoration-none p-3">
+                    <i class="bi bi-list-ul me-1"></i>Каталог
+                </a>
+                <a href="{% url 'calculation_create' %}" class="badge bg-primary text-decoration-none p-3">
+                    <i class="bi bi-calculator me-1"></i>Калькулятор
+                </a>
+                <a href="/admin/" class="badge bg-secondary text-decoration-none p-3">
+                    <i class="bi bi-gear me-1"></i>Админ-панель
+                </a>
+            </div>
+        </div>
+        
+        <div class="mt-5 pt-5 border-top">
+            <p class="text-muted small">
+                Если вы считаете, что это ошибка, пожалуйста, свяжитесь с поддержкой.
+                <br>
+                <a href="mailto:support@jdmcalc.ru" class="text-decoration-none">support@jdmcalc.ru</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -12,3 +12,6 @@
 
 ## Как запустить локально
 Инструкция будет позже.
+
+cd "C:\Users\89126\OneDrive\Dokumente\GitHub\right-hand-car-calculator"
+python manage.py runserver

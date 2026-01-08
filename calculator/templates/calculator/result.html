@@ -141,6 +141,25 @@
         font-weight: 600;
         color: #333;
     }
+    
+    .currency-card {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .currency-rate {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 10px 0;
+    }
+    
+    .currency-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
 </style>
 {% endblock %}
 
@@ -161,10 +180,10 @@
                 <h3 class="mb-3">Итоговая стоимость владения</h3>
                 <div class="total-amount">{{ total_cost|floatformat:0 }} ₽</div>
                 <div class="cost-per-year">
-                    ≈ {{ per_year|default:50000|floatformat:0 }} ₽ в год
+                    ≈ {{ per_year|floatformat:0 }} ₽ в год
                 </div>
                 <p class="text-muted">
-                    Сверх стоимости автомобиля {{ price_rub|default:300000|floatformat:0 }} ₽
+                    Сверх стоимости автомобиля {{ price_rub|floatformat:0 }} ₽
                 </p>
             </div>
             
@@ -178,8 +197,8 @@
                         <div>Таможня и утильсбор</div>
                     </div>
                     <div class="cost-amount">
-                        {{ breakdown.customs|default:90000|floatformat:0 }} ₽
-                        <span class="percentage">(30%)</span>
+                        {{ breakdown.customs|floatformat:0 }} ₽
+                        <span class="percentage">({{ breakdown.customs|divide:total_cost|percentage }})</span>
                     </div>
                 </div>
                 
@@ -189,8 +208,8 @@
                         <div>Адаптация под РФ</div>
                     </div>
                     <div class="cost-amount">
-                        {{ breakdown.adaptation|default:80000|floatformat:0 }} ₽
-                        <span class="percentage">(27%)</span>
+                        {{ breakdown.adaptation|floatformat:0 }} ₽
+                        <span class="percentage">({{ breakdown.adaptation|divide:total_cost|percentage }})</span>
                     </div>
                 </div>
                 
@@ -200,19 +219,19 @@
                         <div>Страховка ({{ years }} года)</div>
                     </div>
                     <div class="cost-amount">
-                        {{ breakdown.insurance|default:75000|floatformat:0 }} ₽
-                        <span class="percentage">(25%)</span>
+                        {{ breakdown.insurance|floatformat:0 }} ₽
+                        <span class="percentage">({{ breakdown.insurance|divide:total_cost|percentage }})</span>
                     </div>
                 </div>
                 
                 <div class="cost-item">
                     <div class="cost-label">
                         <div class="cost-icon">⛽</div>
-                        <div>Топливо ({{ mileage|default:15000|floatformat:0 }} км/год)</div>
+                        <div>Топливо ({{ mileage|floatformat:0 }} км/год)</div>
                     </div>
                     <div class="cost-amount">
-                        {{ breakdown.fuel|default:60000|floatformat:0 }} ₽
-                        <span class="percentage">(20%)</span>
+                        {{ breakdown.fuel|floatformat:0 }} ₽
+                        <span class="percentage">({{ breakdown.fuel|divide:total_cost|percentage }})</span>
                     </div>
                 </div>
                 
@@ -222,8 +241,8 @@
                         <div>ТО и ремонты</div>
                     </div>
                     <div class="cost-amount">
-                        {{ breakdown.maintenance|default:50000|floatformat:0 }} ₽
-                        <span class="percentage">(17%)</span>
+                        {{ breakdown.maintenance|floatformat:0 }} ₽
+                        <span class="percentage">({{ breakdown.maintenance|divide:total_cost|percentage }})</span>
                     </div>
                 </div>
                 
@@ -233,8 +252,8 @@
                         <div>Транспортный налог</div>
                     </div>
                     <div class="cost-amount">
-                        {{ breakdown.tax|default:15000|floatformat:0 }} ₽
-                        <span class="percentage">(5%)</span>
+                        {{ breakdown.tax|floatformat:0 }} ₽
+                        <span class="percentage">({{ breakdown.tax|divide:total_cost|percentage }})</span>
                     </div>
                 </div>
             </div>
@@ -256,8 +275,10 @@
         <div class="col-lg-4">
             <!-- Информация об автомобиле -->
             <div class="car-info-card">
-                <h4 class="mb-3">🚗 Toyota Mark II</h4>
-                <p class="text-muted mb-4">JZX100</p>
+                <h4 class="mb-3">🚗 {{ car.brand }} {{ car.model }}</h4>
+                {% if car.generation %}
+                <p class="text-muted mb-4">{{ car.generation }}</p>
+                {% endif %}
                 
                 <div class="info-grid">
                     <div class="info-item">
@@ -266,16 +287,39 @@
                     </div>
                     <div class="info-item">
                         <div class="info-label">Годовой пробег</div>
-                        <div class="info-value">{{ mileage|default:15000|floatformat:0 }} км</div>
+                        <div class="info-value">{{ mileage|floatformat:0 }} км</div>
                     </div>
                     <div class="info-item">
                         <div class="info-label">Регион</div>
-                        <div class="info-value">{{ region|default:"Москва" }}</div>
+                        <div class="info-value">{{ region }}</div>
                     </div>
                     <div class="info-item">
                         <div class="info-label">Стоимость авто</div>
-                        <div class="info-value">{{ price_rub|default:300000|floatformat:0 }} ₽</div>
+                        <div class="info-value">{{ price_rub|floatformat:0 }} ₽</div>
                     </div>
+                </div>
+            </div>
+            
+            <!-- Актуальные курсы -->
+            <div class="currency-card">
+                <h5 class="mb-3">💱 Актуальные данные</h5>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="currency-label">Курс йены</div>
+                        <div class="currency-rate">{{ exchange_rate|floatformat:4 }}</div>
+                        <div class="currency-label">1 ¥ = {{ exchange_rate|floatformat:4 }} ₽</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="currency-label">Цена топлива</div>
+                        <div class="currency-rate">{{ fuel_price|floatformat:2 }}</div>
+                        <div class="currency-label">₽/л в {{ region }}</div>
+                    </div>
+                </div>
+                <div class="mt-3 pt-3 border-top border-white border-opacity-25">
+                    <small>
+                        <i class="bi bi-cash-coin me-1"></i>
+                        {{ price_jpy|floatformat:0 }} ¥ = {{ price_rub|floatformat:0 }} ₽
+                    </small>
                 </div>
             </div>
             
@@ -288,6 +332,7 @@
                         <li>Самостоятельно заниматься ТО</li>
                         <li>Искать запчасти на разборах</li>
                         <li>Выбирать регион с низкими тарифами</li>
+                        <li>Следить за курсом йены</li>
                     </ul>
                 </div>
             </div>
@@ -315,9 +360,19 @@
 
 {% block extra_js %}
 <script>
+// Альтернативный подход - используем data-атрибуты
+const calcData = {
+    custom: parseFloat('{{ breakdown.customs }}'),
+    adaptation: parseFloat('{{ breakdown.adaptation }}'),
+    insurance: parseFloat('{{ breakdown.insurance }}'),
+    fuel: parseFloat('{{ breakdown.fuel }}'),
+    maintenance: parseFloat('{{ breakdown.maintenance }}'),
+    tax: parseFloat('{{ breakdown.tax }}')
+};
+
 document.addEventListener('DOMContentLoaded', function() {
     // Анимация появления результатов
-    const elements = document.querySelectorAll('.cost-item, .info-item, .total-cost-card');
+    const elements = document.querySelectorAll('.cost-item, .info-item, .total-cost-card, .currency-card');
     elements.forEach((el, index) => {
         el.style.opacity = '0';
         el.style.transform = 'translateY(20px)';
@@ -330,15 +385,15 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Простые данные для демонстрации
     const costs = {
-        'Таможня': 90000,
-        'Адаптация': 80000,
-        'Страховка': 75000,
-        'Топливо': 60000,
-        'ТО': 50000,
-        'Налог': 15000
+        'Таможня': calcData.custom || 0,
+        'Адаптация': calcData.adaptation || 0,
+        'Страховка': calcData.insurance || 0,
+        'Топливо': calcData.fuel || 0,
+        'ТО': calcData.maintenance || 0,
+        'Налог': calcData.tax || 0
     };
     
-    console.log('Детализация расходов (демо):', costs);
+    console.log('Детализация расходов:', costs);
     
     // Подготовка данных для возможного графика
     const chartData = {
@@ -353,7 +408,22 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     
     // Просто логируем для демонстрации
-    console.log('Данные для графика (демо):', chartData);
+    console.log('Данные для графика:', chartData);
+    
+    // Обновляем проценты в реальном времени
+    function updatePercentages() {
+        document.querySelectorAll('.percentage').forEach(el => {
+            const text = el.textContent;
+            const match = text.match(/\(([\d.]+)%\)/);
+            if (match) {
+                const percent = parseFloat(match[1]);
+                el.style.color = percent > 30 ? '#dc3545' : 
+                                percent > 20 ? '#ffc107' : '#28a745';
+            }
+        });
+    }
+    
+    updatePercentages();
 });
 </script>
 {% endblock %}

@@ -5,13 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}🚗 Калькулятор стоимости праворульных авто{% endblock %}</title>
     
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
     
     <style>
@@ -50,11 +45,11 @@
             font-size: 1.8rem;
             color: white !important;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
         }
         
         .navbar-brand:hover {
             transform: scale(1.05);
-            transition: transform 0.3s;
         }
         
         .nav-link {
@@ -165,7 +160,6 @@
             transform: translateY(-5px);
         }
         
-        /* Анимация для загрузки */
         .page-loading {
             position: fixed;
             top: 0;
@@ -194,7 +188,6 @@
             100% { transform: rotate(360deg); }
         }
         
-        /* Адаптивность */
         @media (max-width: 768px) {
             .navbar-brand {
                 font-size: 1.5rem;
@@ -214,12 +207,10 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- Индикатор загрузки -->
     <div class="page-loading" id="pageLoading">
         <div class="loader"></div>
     </div>
 
-    <!-- Навигация -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container">
             <a class="navbar-brand" href="{% url 'home' %}">
@@ -238,7 +229,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if 'cars' in request.path %}active{% endif %}" href="{% url 'car_list' %}">
+                        <a class="nav-link" href="#">
                             <i class="bi bi-list-ul me-1"></i>Каталог авто
                         </a>
                     </li>
@@ -271,7 +262,6 @@
         </div>
     </nav>
 
-    <!-- Основной контент -->
     <div class="main-container" style="padding-top: 90px;">
         <div class="container">
             {% if messages %}
@@ -292,7 +282,6 @@
         </div>
     </div>
 
-    <!-- Подвал -->
     <footer class="footer">
         <div class="container">
             <div class="row">
@@ -339,11 +328,9 @@
         </div>
     </footer>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // Скрываем индикатор загрузки
         window.addEventListener('load', function() {
             setTimeout(function() {
                 document.getElementById('pageLoading').style.opacity = '0';
@@ -353,7 +340,6 @@
             }, 300);
         });
 
-        // Эффект при прокрутке для навигации
         window.addEventListener('scroll', function() {
             const navbar = document.querySelector('.navbar');
             if (window.scrollY > 50) {
@@ -363,7 +349,6 @@
             }
         });
 
-        // Подсветка активной ссылки
         document.addEventListener('DOMContentLoaded', function() {
             const currentPath = window.location.pathname;
             document.querySelectorAll('.nav-link').forEach(link => {
@@ -373,7 +358,6 @@
             });
         });
 
-        // Плавная прокрутка для якорей
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
                 e.preventDefault();

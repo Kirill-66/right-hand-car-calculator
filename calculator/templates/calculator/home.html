@@ -110,7 +110,6 @@
 {% endblock %}
 
 {% block content %}
-<!-- Герой-секция -->
 <div class="hero-section text-center">
     <div class="container">
         <h1 class="hero-title mb-4">💰 Рассчитайте реальную стоимость владения праворульным авто</h1>
@@ -124,7 +123,6 @@
     </div>
 </div>
 
-<!-- Секция преимуществ -->
 <div class="container">
     <div class="row mb-5">
         <div class="col-md-6">
@@ -178,7 +176,6 @@
         </div>
     </div>
 
-    <!-- Карточки функций -->
     <h2 class="text-center mb-5">✨ Что вы можете сделать?</h2>
     <div class="row mb-5">
         <div class="col-md-4 mb-4">
@@ -230,7 +227,6 @@
         </div>
     </div>
 
-    <!-- Популярные модели -->
     <div class="text-center mb-5">
         <h2 class="mb-4">🏆 Самые популярные модели для расчета</h2>
         <p class="lead text-muted mb-4">Выберите автомобиль или добавьте свой</p>
@@ -263,7 +259,6 @@
         </div>
     </div>
 
-    <!-- Призыв к действию -->
     <div class="text-center mt-5 pt-5">
         <h2 class="mb-4">Готовы узнать реальную стоимость?</h2>
         <p class="lead mb-4">Пройдите 3 простых шага и получите детальный расчет на 5 лет</p>
@@ -297,9 +292,7 @@
 
 {% block extra_js %}
 <script>
-// Анимация для карточек
 document.addEventListener('DOMContentLoaded', function() {
-    // Плавное появление элементов
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -309,7 +302,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Назначаем анимацию для всех карточек
     document.querySelectorAll('.feature-card').forEach(card => {
         card.style.opacity = 0;
         card.style.transform = 'translateY(20px)';
@@ -317,7 +309,6 @@ document.addEventListener('DOMContentLoaded', function() {
         observer.observe(card);
     });
     
-    // Анимация для бейджей авто
     document.querySelectorAll('.car-badge').forEach(badge => {
         badge.addEventListener('mouseenter', function() {
             this.style.transform = 'scale(1.05) rotate(1deg)';
