@@ -1,0 +1,410 @@
+{% extends 'calculator/base.html' %}
+
+{% block title %}Калькулятор стоимости владения - JDM Calculator{% endblock %}
+
+{% block extra_css %}
+<style>
+    .calculator-header {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+        padding: 60px 0;
+        border-radius: 0 0 30px 30px;
+        margin-bottom: 50px;
+    }
+    
+    .form-card {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        border: 1px solid #e0e0e0;
+    }
+    
+    .step-indicator {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 40px;
+        position: relative;
+    }
+    
+    .step-indicator::before {
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: 10%;
+        right: 10%;
+        height: 3px;
+        background: #e0e0e0;
+        z-index: 1;
+    }
+    
+    .step {
+        text-align: center;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .step-number {
+        width: 40px;
+        height: 40px;
+        background: #e0e0e0;
+        color: #666;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin: 0 auto 10px;
+        transition: all 0.3s;
+    }
+    
+    .step.active .step-number {
+        background: #11998e;
+        color: white;
+        transform: scale(1.1);
+    }
+    
+    .step-label {
+        font-size: 0.9rem;
+        color: #666;
+        font-weight: 500;
+    }
+    
+    .step.active .step-label {
+        color: #11998e;
+        font-weight: 600;
+    }
+    
+    .form-group-custom {
+        margin-bottom: 25px;
+    }
+    
+    .form-label-custom {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+    }
+    
+    .form-control-custom {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s;
+    }
+    
+    .form-control-custom:focus {
+        outline: none;
+        border-color: #11998e;
+        box-shadow: 0 0 0 3px rgba(17, 153, 142, 0.1);
+    }
+    
+    .form-control-custom.select {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23333' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 16px center;
+        padding-right: 40px;
+    }
+    
+    .calculate-btn {
+        background: linear-gradient(45deg, #11998e, #38ef7d);
+        border: none;
+        color: white;
+        padding: 16px 40px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: all 0.3s;
+        width: 100%;
+        margin-top: 20px;
+    }
+    
+    .calculate-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(17, 153, 142, 0.3);
+    }
+    
+    .info-box {
+        background: #f8f9fa;
+        border-left: 4px solid #11998e;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 30px;
+    }
+    
+    .info-title {
+        color: #11998e;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+    
+    /* Стили для ошибок формы */
+    .error-list {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 5px;
+        padding-left: 0;
+        list-style: none;
+    }
+    
+    .error-list li {
+        background: #f8d7da;
+        border: 1px solid #f5c6cb;
+        border-radius: 5px;
+        padding: 8px 12px;
+        margin-bottom: 5px;
+    }
+    
+    .field-error {
+        border-color: #dc3545 !important;
+    }
+    
+    .field-error:focus {
+        border-color: #dc3545 !important;
+        box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1) !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Шапка калькулятора -->
+<div class="calculator-header">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-3">🧮 Калькулятор стоимости владения</h1>
+        <p class="lead mb-0">Рассчитайте полные расходы на покупку и содержание праворульного автомобиля в России</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="form-card">
+                <!-- Шаги расчета -->
+                <div class="step-indicator">
+                    <div class="step active">
+                        <div class="step-number">1</div>
+                        <div class="step-label">Выбор авто</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-label">Параметры</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-label">Расчет</div>
+                    </div>
+                </div>
+                
+                <!-- Форма расчета -->
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    
+                    <!-- Ошибки формы -->
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {% for error in form.non_field_errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Автомобиль -->
+                    <div class="form-group-custom">
+                        <label class="form-label-custom">
+                            <i class="bi bi-car-front me-2"></i>{{ form.car.label }}
+                        </label>
+                        {{ form.car }}
+                        {% if form.car.errors %}
+                        <ul class="error-list">
+                            {% for error in form.car.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Цена в Японии -->
+                    <div class="form-group-custom">
+                        <label class="form-label-custom">
+                            <i class="bi bi-currency-yen me-2"></i>{{ form.purchase_price_jpy.label }}
+                        </label>
+                        <div class="input-group">
+                            {{ form.purchase_price_jpy }}
+                            <span class="input-group-text">¥</span>
+                        </div>
+                        {% if form.purchase_price_jpy.errors %}
+                        <ul class="error-list">
+                            {% for error in form.purchase_price_jpy.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                        <small class="text-muted">{{ form.purchase_price_jpy.help_text }}</small>
+                    </div>
+                    
+                    <!-- Годовой пробег -->
+                    <div class="form-group-custom">
+                        <label class="form-label-custom">
+                            <i class="bi bi-speedometer2 me-2"></i>{{ form.annual_mileage.label }}
+                        </label>
+                        <div class="input-group">
+                            {{ form.annual_mileage }}
+                            <span class="input-group-text">км/год</span>
+                        </div>
+                        {% if form.annual_mileage.errors %}
+                        <ul class="error-list">
+                            {% for error in form.annual_mileage.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                        <small class="text-muted">{{ form.annual_mileage.help_text }}</small>
+                    </div>
+                    
+                    <!-- Срок владения -->
+                    <div class="form-group-custom">
+                        <label class="form-label-custom">
+                            <i class="bi bi-calendar-range me-2"></i>{{ form.ownership_years.label }}
+                        </label>
+                        {{ form.ownership_years }}
+                        {% if form.ownership_years.errors %}
+                        <ul class="error-list">
+                            {% for error in form.ownership_years.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Регион -->
+                    <div class="form-group-custom">
+                        <label class="form-label-custom">
+                            <i class="bi bi-geo-alt me-2"></i>{{ form.region.label }}
+                        </label>
+                        {{ form.region }}
+                        {% if form.region.errors %}
+                        <ul class="error-list">
+                            {% for error in form.region.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                        <small class="text-muted">Влияет на стоимость страховки и ТО</small>
+                    </div>
+                    
+                    <!-- Кнопка расчета -->
+                    <button type="submit" class="calculate-btn">
+                        <i class="bi bi-calculator me-2"></i>Рассчитать полную стоимость
+                    </button>
+                </form>
+                
+                <!-- Информационный блок -->
+                <div class="info-box">
+                    <div class="info-title">
+                        <i class="bi bi-info-circle me-2"></i>Что учитывается в расчете?
+                    </div>
+                    <ul class="mb-0">
+                        <li>Таможенные пошлины и утильсбор</li>
+                        <li>Адаптация под российские условия (печка, антикор)</li>
+                        <li>Страховка ОСАГО/КАСКО</li>
+                        <li>Техническое обслуживание и ремонты</li>
+                        <li>Топливо по средним ценам</li>
+                        <li>Транспортный налог</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Быстрый пример -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">Пример расчета:</h5>
+                    <p class="card-text">
+                        <strong>Toyota Mark II (500,000 ¥)</strong> на 3 года в Москве с пробегом 15,000 км/год
+                        обойдется примерно в <strong>450,000 - 550,000 рублей</strong> сверх стоимости автомобиля.
+                    </p>
+                    <a href="#" class="btn btn-outline-primary">Подробнее о методике расчета</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Добавляем классы к полям формы
+    const inputs = document.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+        if (input.tagName === 'SELECT') {
+            input.classList.add('form-control-custom', 'select');
+        } else if (input.type !== 'hidden') {
+            input.classList.add('form-control-custom');
+        }
+    });
+    
+    // Динамическое обновление шагов
+    const steps = document.querySelectorAll('.step');
+    const form = document.querySelector('form');
+    const carSelect = document.querySelector('#id_car');
+    
+    if (carSelect) {
+        carSelect.addEventListener('change', function() {
+            if (this.value) {
+                steps[1].classList.add('active');
+            } else {
+                steps[1].classList.remove('active');
+            }
+        });
+    }
+    
+    // Анимация полей формы
+    inputs.forEach(input => {
+        if (input.type !== 'hidden') {
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.classList.remove('focused');
+            });
+        }
+    });
+    
+    // Подсказка при наведении на цену
+    const priceInput = document.querySelector('#id_purchase_price_jpy');
+    if (priceInput) {
+        priceInput.addEventListener('input', function() {
+            const price = parseInt(this.value) || 0;
+            const rub = Math.round(price * 0.6);
+            let hint = document.getElementById('priceHint');
+            
+            if (!hint) {
+                hint = document.createElement('div');
+                hint.id = 'priceHint';
+                hint.className = 'form-text text-muted mt-1';
+                this.parentElement.parentElement.appendChild(hint);
+            }
+            
+            hint.innerHTML = `≈ ${rub.toLocaleString('ru-RU')} рублей по текущему курсу`;
+        });
+        
+        // Запускаем расчет начальной подсказки
+        priceInput.dispatchEvent(new Event('input'));
+    }
+    
+    // Подсвечиваем поля с ошибками
+    const errorFields = document.querySelectorAll('.error-list');
+    errorFields.forEach(errorList => {
+        const field = errorList.previousElementSibling;
+        if (field && (field.tagName === 'INPUT' || field.tagName === 'SELECT' || field.tagName === 'TEXTAREA')) {
+            field.classList.add('field-error');
+        }
+    });
+});
+</script>
+{% endblock %}
