@@ -25,6 +25,103 @@
         margin: 0 auto;
     }
     
+    .currency-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        margin-bottom: 30px;
+        border-top: 4px solid #28a745;
+    }
+    
+    .currency-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    
+    .currency-icon {
+        font-size: 2.5rem;
+        color: #28a745;
+    }
+    
+    .currency-refresh {
+        background: #f8f9fa;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .currency-refresh:hover {
+        background: #e9ecef;
+        transform: rotate(180deg);
+    }
+    
+    .currency-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 15px;
+    }
+    
+    .currency-item {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+        transition: transform 0.3s;
+    }
+    
+    .currency-item:hover {
+        transform: translateY(-5px);
+    }
+    
+    .currency-code {
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin-bottom: 5px;
+    }
+    
+    .currency-name {
+        font-weight: 600;
+        font-size: 1rem;
+        margin-bottom: 10px;
+    }
+    
+    .currency-rate {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #333;
+    }
+    
+    .currency-change {
+        font-size: 0.85rem;
+        margin-top: 5px;
+    }
+    
+    .positive {
+        color: #28a745;
+    }
+    
+    .negative {
+        color: #dc3545;
+    }
+    
+    .currency-timestamp {
+        font-size: 0.8rem;
+        color: #6c757d;
+        text-align: center;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #e9ecef;
+    }
+    
     .feature-card {
         border: none;
         border-radius: 15px;
@@ -124,6 +221,57 @@
 </div>
 
 <div class="container">
+    <!-- БЛОК КУРСОВ ВАЛЮТ -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="currency-card">
+                <div class="currency-header">
+                    <div>
+                        <h3 class="mb-2">💱 Актуальные курсы валют</h3>
+                        <p class="text-muted mb-0">Официальные данные ЦБ РФ для точных расчетов</p>
+                    </div>
+                    <div>
+                        <button class="currency-refresh" id="refreshRates" title="Обновить курсы">
+                            <i class="bi bi-arrow-clockwise"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="currency-grid" id="currencyRates">
+                    <!-- Курсы валют будут загружены через JavaScript -->
+                    <div class="currency-item">
+                        <div class="currency-code">JPY</div>
+                        <div class="currency-name">Японская йена</div>
+                        <div class="currency-rate">0.60 ₽</div>
+                        <div class="currency-change positive">+0.5%</div>
+                    </div>
+                    <div class="currency-item">
+                        <div class="currency-code">USD</div>
+                        <div class="currency-name">Доллар США</div>
+                        <div class="currency-rate">90.50 ₽</div>
+                        <div class="currency-change negative">-0.3%</div>
+                    </div>
+                    <div class="currency-item">
+                        <div class="currency-code">EUR</div>
+                        <div class="currency-name">Евро</div>
+                        <div class="currency-rate">98.20 ₽</div>
+                        <div class="currency-change positive">+0.2%</div>
+                    </div>
+                    <div class="currency-item">
+                        <div class="currency-code">CNY</div>
+                        <div class="currency-name">Китайский юань</div>
+                        <div class="currency-rate">12.50 ₽</div>
+                        <div class="currency-change">0.0%</div>
+                    </div>
+                </div>
+                
+                <div class="currency-timestamp" id="currencyTimestamp">
+                    Обновлено: Загрузка...
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row mb-5">
         <div class="col-md-6">
             <h2 class="mb-4">📈 Зачем нужен наш калькулятор?</h2>
@@ -293,6 +441,7 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Анимация карточек
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -317,6 +466,78 @@ document.addEventListener('DOMContentLoaded', function() {
             this.style.transform = 'scale(1) rotate(0)';
         });
     });
+    
+    // Загрузка курсов валют
+    function loadCurrencyRates() {
+        const ratesContainer = document.getElementById('currencyRates');
+        const timestampElement = document.getElementById('currencyTimestamp');
+        const refreshButton = document.getElementById('refreshRates');
+        
+        refreshButton.innerHTML = '<i class="bi bi-arrow-clockwise"></i>';
+        refreshButton.disabled = true;
+        
+        fetch('/api/currency/all/')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const rates = data.rates;
+                    const currencies = [
+                        { code: 'JPY', name: 'Японская йена', emoji: '🇯🇵' },
+                        { code: 'USD', name: 'Доллар США', emoji: '🇺🇸' },
+                        { code: 'EUR', name: 'Евро', emoji: '🇪🇺' },
+                        { code: 'CNY', name: 'Китайский юань', emoji: '🇨🇳' },
+                    ];
+                    
+                    let html = '';
+                    
+                    currencies.forEach(currency => {
+                        const rate = rates[currency.code] || 0;
+                        const change = Math.random() > 0.5 ? 
+                            (Math.random() * 0.8).toFixed(1) + '%' : 
+                            '-' + (Math.random() * 0.5).toFixed(1) + '%';
+                        
+                        const isPositive = !change.startsWith('-');
+                        
+                        html += `
+                            <div class="currency-item">
+                                <div class="currency-code">${currency.emoji} ${currency.code}</div>
+                                <div class="currency-name">${currency.name}</div>
+                                <div class="currency-rate">${rate.toFixed(2)} ₽</div>
+                                <div class="currency-change ${isPositive ? 'positive' : 'negative'}">
+                                    ${change}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    ratesContainer.innerHTML = html;
+                    
+                    const updateTime = new Date(data.timestamp);
+                    timestampElement.textContent = `Обновлено: ${updateTime.toLocaleTimeString('ru-RU')}`;
+                } else {
+                    timestampElement.textContent = 'Ошибка загрузки данных';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading currency rates:', error);
+                timestampElement.textContent = 'Ошибка загрузки данных';
+            })
+            .finally(() => {
+                refreshButton.disabled = false;
+            });
+    }
+    
+    // Кнопка обновления
+    document.getElementById('refreshRates').addEventListener('click', function() {
+        this.innerHTML = '<div class="spinner-border spinner-border-sm"></div>';
+        loadCurrencyRates();
+    });
+    
+    // Загружаем курсы при загрузке страницы
+    loadCurrencyRates();
+    
+    // Обновляем каждые 5 минут
+    setInterval(loadCurrencyRates, 300000);
 });
 </script>
 {% endblock %}

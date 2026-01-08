@@ -4,6 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from .models import RightHandCar, OwnershipCalculation, CostItem
 from .forms import CalculationForm, CarFilterForm
+from django.http import JsonResponse
+from datetime import datetime
 
 
 def home(request):
@@ -303,3 +305,94 @@ def handler404(request, exception):
 def handler500(request):
     """Обработка ошибки 500"""
     return render(request, 'calculator/500.html', status=500)
+
+def api_currency_rate(request):
+    currency = request.GET.get('currency', 'JPY')
+    
+    try:
+        from .api_services import get_jpy_to_rub_rate, get_cbr_currency_rate
+        
+        if currency == 'JPY':
+            rate = get_jpy_to_rub_rate()
+        else:
+            rate = get_cbr_currency_rate(currency)
+            
+        return JsonResponse({
+            'success': True,
+            'currency': currency,
+            'rate': rate,
+            'timestamp': datetime.now().isoformat()
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
+
+
+def api_all_rates(request):
+    try:
+        from .api_services import update_all_rates
+        rates = update_all_rates()
+        
+        return JsonResponse({
+            'success': True,
+            'rates': rates,
+            'timestamp': datetime.now().isoformat()
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
+
+
+def api_calculate(request):
+    price_jpy = request.GET.get('price_jpy')
+    engine_volume = request.GET.get('engine_volume')
+    year = request.GET.get('year')
+    
+    if not all([price_jpy, engine_volume, year]):
+        return JsonResponse({
+            'success': False,
+            'error': 'price_jpy, engine_volume and year are required'
+        }, status=400)
+    
+    try:
+        from .api_services import calculate_customs_cost
+        result = calculate_customs_cost(
+            float(price_jpy),
+            float(engine_volume),
+            int(year)
+        )
+        
+        return JsonResponse({
+            'success': True,
+            **result,
+            'timestamp': datetime.now().isoformat()
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
+
+
+def api_fuel_price(request):
+    region = request.GET.get('region', 'moscow')
+    
+    try:
+        from .api_services import get_russia_fuel_price
+        price = get_russia_fuel_price(region)
+        
+        return JsonResponse({
+            'success': True,
+            'region': region,
+            'fuel_price': price,
+            'timestamp': datetime.now().isoformat()
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)

@@ -13,4 +13,9 @@ urlpatterns = [
     # Пользовательские
     path('my-calculations/', views.my_calculations, name='my_calculations'),
     path('calculation/<int:calculation_id>/delete/', views.calculation_delete, name='calculation_delete'),
+
+    path('api/currency/', views.api_currency_rate, name='api_currency'),
+    path('api/currency/all/', views.api_all_rates, name='api_all_rates'),
+    path('api/calculate-customs/', views.api_calculate, name='api_calculate'),
+    path('api/fuel-price/', views.api_fuel_price, name='api_fuel_price'),
 ]
