@@ -1,37 +1,229 @@
 {% extends 'calculator/base.html' %}
 
-{% block title %}Главная - Калькулятор стоимости владения праворульным авто{% endblock %}
+{% block title %}Калькулятор стоимости праворульного авто - JDM Calculator{% endblock %}
 
 {% block extra_css %}
 <style>
-    .hero-section {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 80px 0;
-        border-radius: 0 0 30px 30px;
-        margin-bottom: 60px;
+    body {
+        background-color: #f8f9fa;
+        margin: 0;
+        padding: 0;
     }
     
-    .hero-title {
-        font-size: 3.5rem;
-        font-weight: 800;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    #page-preloader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #1a1a1a !important; 
+        z-index: 9999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: opacity 0.3s ease;
     }
     
-    .hero-subtitle {
+    .spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid rgba(255, 59, 48, 0.3);
+        border-top: 4px solid #ff3b30;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    .navbar {
+        background: #1a1a1a !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        padding: 12px 0;
+    }
+    
+    .navbar-brand {
+        font-weight: 700;
         font-size: 1.5rem;
-        opacity: 0.9;
-        max-width: 700px;
-        margin: 0 auto;
+        color: white !important;
     }
     
-    .currency-card {
-        background: white;
-        border-radius: 15px;
-        padding: 25px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    .navbar-brand i {
+        color: #ff3b30;
+    }
+    
+    .nav-link {
+        color: rgba(255, 255, 255, 0.8) !important;
+        font-weight: 500;
+        padding: 8px 16px !important;
+        border-radius: 4px;
+        margin: 0 5px;
+    }
+    
+    .nav-link:hover {
+        color: white !important;
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .nav-link.active {
+        background: #ff3b30;
+        color: white !important;
+    }
+    
+    .login-btn {
+        background: #ff3b30;
+        border: none;
+        color: white;
+        padding: 8px 20px;
+        border-radius: 4px;
+        font-weight: 600;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .login-btn:hover {
+        background: #e0352a;
+        color: white;
+    }
+    
+    .main-banner {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        color: white;
+        padding: 60px 0 40px;
         margin-bottom: 30px;
-        border-top: 4px solid #28a745;
+        border-radius: 0 0 8px 8px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .main-banner::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 50%;
+        height: 100%;
+        background: 
+            radial-gradient(circle at 70% 30%, rgba(255, 59, 48, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 30% 70%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+    }
+    
+    .banner-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        line-height: 1.2;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .banner-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        max-width: 600px;
+        margin-bottom: 25px;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .search-form {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        margin-top: 20px;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .search-form h4 {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+        color: #333;
+    }
+    
+    .search-form .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+    }
+    
+    .search-form .form-control {
+        border: 2px solid #e0e0e0;
+        border-radius: 4px;
+        padding: 10px 15px;
+        font-size: 0.95rem;
+    }
+    
+    .search-form .form-control:focus {
+        border-color: #ff3b30;
+        box-shadow: none;
+    }
+    
+    .search-btn {
+        background: #ff3b30;
+        border: none;
+        color: white;
+        padding: 12px 25px;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 4px;
+        width: 100%;
+        transition: all 0.3s;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .search-btn:hover {
+        background: #e0352a;
+        transform: translateY(-2px);
+    }
+    
+    .info-block {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 30px;
+        margin: -20px 0 40px 0;
+        position: relative;
+        z-index: 1;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+        border: 1px solid #e8e8e8;
+    }
+    
+    .info-content {
+        max-width: 900px;
+        margin: 0 auto;
+        text-align: center;
+    }
+    
+    .info-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 15px;
+    }
+    
+    .info-text {
+        font-size: 1.05rem;
+        color: #555;
+        line-height: 1.6;
+        margin-bottom: 0;
+    }
+    
+    .currency-widget {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        margin: 50px 0 40px;
+        border: 1px solid #e8e8e8;
     }
     
     .currency-header {
@@ -39,401 +231,712 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #e8e8e8;
     }
     
-    .currency-icon {
-        font-size: 2.5rem;
-        color: #28a745;
+    .currency-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #333;
+        margin: 0;
     }
     
-    .currency-refresh {
-        background: #f8f9fa;
+    .currency-refresh-btn {
+        background: none;
         border: none;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
+        color: #666;
+        cursor: pointer;
+        padding: 5px;
+        border-radius: 4px;
+        transition: all 0.3s;
+        width: 36px;
+        height: 36px;
         display: flex;
         align-items: center;
         justify-content: center;
-        cursor: pointer;
-        transition: all 0.3s;
     }
     
-    .currency-refresh:hover {
-        background: #e9ecef;
-        transform: rotate(180deg);
+    .currency-refresh-btn:hover {
+        color: #ff3b30;
+        background: #f5f5f5;
     }
     
     .currency-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
         gap: 15px;
     }
     
     .currency-item {
         background: #f8f9fa;
-        padding: 15px;
-        border-radius: 10px;
-        text-align: center;
-        transition: transform 0.3s;
+        border-radius: 8px;
+        padding: 18px;
+        transition: all 0.3s;
+        border: 1px solid #e8e8e8;
+        cursor: pointer;
     }
     
     .currency-item:hover {
-        transform: translateY(-5px);
+        background: #f0f0f0;
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .currency-item.active {
+        border-color: #ff3b30;
+        background: #fff5f5;
     }
     
     .currency-code {
         font-size: 0.9rem;
-        color: #6c757d;
+        color: #666;
         margin-bottom: 5px;
+        font-weight: 600;
     }
     
     .currency-name {
         font-weight: 600;
+        color: #333;
         font-size: 1rem;
-        margin-bottom: 10px;
+        margin-bottom: 12px;
     }
     
     .currency-rate {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
         font-weight: 700;
-        color: #333;
+        color: #1a1a1a;
+        margin-bottom: 5px;
     }
     
     .currency-change {
         font-size: 0.85rem;
-        margin-top: 5px;
+        font-weight: 600;
     }
     
-    .positive {
-        color: #28a745;
+    .change-up {
+        color: #00a046;
     }
     
-    .negative {
-        color: #dc3545;
+    .change-down {
+        color: #ff3b30;
     }
     
     .currency-timestamp {
-        font-size: 0.8rem;
-        color: #6c757d;
+        font-size: 0.85rem;
+        color: #888;
         text-align: center;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #e8e8e8;
+    }
+    
+    .currency-info {
+        font-size: 0.8rem;
+        color: #666;
+        margin-top: 10px;
+        font-style: italic;
+        text-align: center;
+    }
+    
+    .currency-error {
+        background: #fff5f5;
+        border: 1px solid #ffcccc;
+        border-radius: 8px;
+        padding: 15px;
         margin-top: 15px;
-        padding-top: 15px;
-        border-top: 1px solid #e9ecef;
+        color: #ff3b30;
+        font-size: 0.9rem;
+        text-align: center;
     }
     
-    .feature-card {
-        border: none;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        transition: transform 0.3s, box-shadow 0.3s;
+    .section-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 30px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #ff3b30;
+        display: inline-block;
+    }
+    
+    .popular-models {
+        margin: 30px 0 50px;
+    }
+    
+    .car-card {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        border: 1px solid #e8e8e8;
+        transition: all 0.3s;
         height: 100%;
+        display: flex;
+        flex-direction: column;
     }
     
-    .feature-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    .car-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+        border-color: #ff3b30;
+    }
+
+    .car-image {
+        height: 200px;
+        position: relative;
+        overflow: hidden;
+        background: #1a1a1a;
+    }
+
+    .car-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .car-image:hover img {
+        transform: scale(1.05);
+    }
+
+    .car-image .placeholder {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        font-size: 3.5rem;
+    }
+
+    .car-image .placeholder.bg-image {
+        font-size: 1.5rem;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(5px);
+        display: none;
+    }
+
+    .car-image .model-badge {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        background: rgba(255, 59, 48, 0.9);
+        color: white;
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        z-index: 2;
+    }
+    
+    .car-content {
+        padding: 20px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .car-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 10px;
+        line-height: 1.3;
+    }
+    
+    .car-specs {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+        line-height: 1.5;
+        flex-grow: 1;
+    }
+    
+    .car-price {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #ff3b30;
+        margin-bottom: 15px;
+    }
+    
+    .car-price-rub {
+        font-size: 0.9rem;
+        color: #666;
+        margin-top: 5px;
+    }
+    
+    .car-btn, .feature-btn, .cta-btn, .btn-lg {
+        height: 46px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 1rem !important;
+        font-weight: 600 !important;
+        padding: 10px 22px !important;
+        border-radius: 4px !important;
+        text-decoration: none !important;
+        transition: all 0.3s !important;
+        vertical-align: middle !important;
+        line-height: 1.5 !important;
+        border: none !important;
+        cursor: pointer !important;
+    }
+    
+    .car-btn {
+        background: #1a1a1a;
+        color: white;
+        width: 100%;
+        margin-top: auto;
+    }
+    
+    .car-btn:hover {
+        background: #ff3b30;
+        color: white;
+        text-decoration: none;
+    }
+    
+    .features-section {
+        margin: 40px 0 60px;
+    }
+    
+    .feature-block {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        border: 1px solid #e8e8e8;
+        height: 100%;
+        transition: all 0.3s;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .feature-block:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+        border-color: #ff3b30;
     }
     
     .feature-icon {
-        font-size: 3rem;
+        font-size: 2.5rem;
         margin-bottom: 20px;
+        color: #ff3b30;
     }
     
-    .car-badge {
-        background: linear-gradient(45deg, #6a11cb 0%, #2575fc 100%);
+    .feature-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 15px;
+        line-height: 1.3;
+    }
+    
+    .feature-text {
+        color: #555;
+        line-height: 1.6;
+        margin-bottom: 20px;
+        font-size: 0.98rem;
+        flex-grow: 1;
+    }
+    
+    .feature-btn {
+        background: #1a1a1a;
         color: white;
-        padding: 12px 20px;
-        border-radius: 25px;
-        font-weight: 600;
-        box-shadow: 0 5px 15px rgba(106, 17, 203, 0.3);
-        transition: all 0.3s;
+        align-self: flex-start;
     }
     
-    .car-badge:hover {
-        transform: scale(1.05);
-        box-shadow: 0 8px 20px rgba(106, 17, 203, 0.4);
+    .feature-btn:hover {
+        background: #ff3b30;
+        color: white;
+        text-decoration: none;
     }
     
-    .stats-section {
-        background: #f8f9fa;
-        border-radius: 20px;
-        padding: 40px;
-        margin: 60px 0;
+    .stats-block {
+        background: #1a1a1a;
+        color: white;
+        border-radius: 10px;
+        padding: 35px 25px;
+        margin: 50px 0;
+    }
+    
+    .stat-item {
+        text-align: center;
+        padding: 15px 10px;
     }
     
     .stat-number {
-        font-size: 2.5rem;
+        font-size: 2.2rem;
         font-weight: 700;
-        color: #667eea;
+        color: #ff3b30;
+        margin-bottom: 10px;
     }
     
     .stat-label {
-        color: #6c757d;
-        font-size: 1.1rem;
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.8);
+        line-height: 1.4;
     }
     
-    .cta-button {
-        background: linear-gradient(45deg, #FF416C, #FF4B2B);
-        border: none;
-        padding: 15px 40px;
-        font-size: 1.2rem;
-        font-weight: 600;
-        border-radius: 50px;
-        box-shadow: 0 10px 25px rgba(255, 65, 108, 0.3);
-        transition: all 0.3s;
+    .cta-block {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+        color: white;
+        border-radius: 10px;
+        padding: 45px 30px;
+        text-align: center;
+        margin: 50px 0 40px;
     }
     
-    .cta-button:hover {
+    .cta-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        line-height: 1.3;
+    }
+    
+    .cta-text {
+        font-size: 1.05rem;
+        opacity: 0.9;
+        max-width: 700px;
+        margin: 0 auto 30px;
+        line-height: 1.6;
+    }
+    
+    .cta-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    
+    .cta-btn {
+        background: #ff3b30;
+        color: white;
+        padding: 14px 35px;
+        height: 54px !important;
+    }
+    
+    .cta-btn:hover {
+        background: #e0352a;
         transform: translateY(-3px);
-        box-shadow: 0 15px 30px rgba(255, 65, 108, 0.4);
+        color: white;
+        text-decoration: none;
     }
     
-    .benefit-item {
-        padding: 15px 0;
-        border-bottom: 1px solid #eee;
+    .cta-block .btn-outline-light {
+        border: 2px solid rgba(255, 255, 255, 0.3) !important;
+        color: white !important;
+        background: transparent !important;
+        height: 54px !important;
     }
     
-    .benefit-item:last-child {
-        border-bottom: none;
+    .cta-block .btn-outline-light:hover {
+        background: rgba(255, 255, 255, 0.1) !important;
+        border-color: white !important;
     }
     
-    .benefit-icon {
-        color: #667eea;
-        font-size: 1.5rem;
-        margin-right: 15px;
+    .container {
+        max-width: 1200px;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    
+    @media (max-width: 768px) {
+        .banner-title {
+            font-size: 1.8rem;
+        }
+        
+        .search-form {
+            margin-top: 30px;
+        }
+        
+        .currency-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .stat-number {
+            font-size: 1.8rem;
+        }
+        
+        .container {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+        
+        .info-block {
+            padding: 25px 20px;
+            margin: -15px 0 30px 0;
+        }
+        
+        .cta-buttons {
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .cta-btn, .cta-block .btn-outline-light {
+            width: 100%;
+            max-width: 300px;
+        }
+    }
+    
+    @media (min-width: 1200px) {
+        .container {
+            max-width: 1300px;
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="hero-section text-center">
+
+<div class="main-banner">
     <div class="container">
-        <h1 class="hero-title mb-4">💰 Рассчитайте реальную стоимость владения праворульным авто</h1>
-        <p class="hero-subtitle mb-5">
-            Точно спланируйте бюджет на покупку и содержание JDM автомобиля в России. 
-            Все расходы от таможни до ежегодного ТО в одном калькуляторе.
-        </p>
-        <a href="{% url 'calculation_create' %}" class="btn btn-light btn-lg cta-button">
-            🚀 Начать расчет прямо сейчас
-        </a>
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="banner-title">Расчет стоимости праворульного автомобиля из Японии</h1>
+                <p class="banner-subtitle">Узнайте полную стоимость владения с учетом таможни, доставки и обслуживания. Точный расчет за 2 минуты.</p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <a href="{% url 'calculation_create' %}" class="btn btn-danger btn-lg px-4 py-3">
+                        <i class="bi bi-calculator me-2"></i>Рассчитать стоимость
+                    </a>
+                    <a href="{% url 'car_list' %}" class="btn btn-outline-light btn-lg px-4 py-3">
+                        <i class="bi bi-car-front me-2"></i>Смотреть каталог
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="search-form">
+                    <h4>Быстрый поиск автомобиля</h4>
+                    <form action="{% url 'car_list' %}" method="get">
+                        <div class="mb-3">
+                            <label class="form-label">Марка автомобиля</label>
+                            <select name="brand" class="form-control">
+                                <option value="">Все марки</option>
+                                <option value="toyota">Toyota</option>
+                                <option value="nissan">Nissan</option>
+                                <option value="subaru">Subaru</option>
+                                <option value="mitsubishi">Mitsubishi</option>
+                                <option value="honda">Honda</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Год выпуска от</label>
+                            <input type="number" name="year_from" class="form-control" placeholder="2000" min="1990" max="2024">
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Тип топлива</label>
+                            <select name="fuel_type" class="form-control">
+                                <option value="">Все типы</option>
+                                <option value="petrol">Бензин</option>
+                                <option value="diesel">Дизель</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="search-btn">
+                            <i class="bi bi-search me-2"></i>Найти автомобили
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <div class="container">
-    <!-- БЛОК КУРСОВ ВАЛЮТ -->
-    <div class="row mb-5">
-        <div class="col-12">
-            <div class="currency-card">
-                <div class="currency-header">
-                    <div>
-                        <h3 class="mb-2">💱 Актуальные курсы валют</h3>
-                        <p class="text-muted mb-0">Официальные данные ЦБ РФ для точных расчетов</p>
-                    </div>
-                    <div>
-                        <button class="currency-refresh" id="refreshRates" title="Обновить курсы">
-                            <i class="bi bi-arrow-clockwise"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="currency-grid" id="currencyRates">
-                    <!-- Курсы валют будут загружены через JavaScript -->
-                    <div class="currency-item">
-                        <div class="currency-code">JPY</div>
-                        <div class="currency-name">Японская йена</div>
-                        <div class="currency-rate">0.60 ₽</div>
-                        <div class="currency-change positive">+0.5%</div>
-                    </div>
-                    <div class="currency-item">
-                        <div class="currency-code">USD</div>
-                        <div class="currency-name">Доллар США</div>
-                        <div class="currency-rate">90.50 ₽</div>
-                        <div class="currency-change negative">-0.3%</div>
-                    </div>
-                    <div class="currency-item">
-                        <div class="currency-code">EUR</div>
-                        <div class="currency-name">Евро</div>
-                        <div class="currency-rate">98.20 ₽</div>
-                        <div class="currency-change positive">+0.2%</div>
-                    </div>
-                    <div class="currency-item">
-                        <div class="currency-code">CNY</div>
-                        <div class="currency-name">Китайский юань</div>
-                        <div class="currency-rate">12.50 ₽</div>
-                        <div class="currency-change">0.0%</div>
-                    </div>
-                </div>
-                
-                <div class="currency-timestamp" id="currencyTimestamp">
-                    Обновлено: Загрузка...
-                </div>
-            </div>
+    <div class="info-block">
+        <div class="info-content">
+            <h3 class="info-title">Расчет стоимости праворульного автомобиля из Японии</h3>
+            <p class="info-text">Узнайте полную стоимость владения с учетом таможни, доставки и обслуживания. Точный расчет за 2 минуты.</p>
         </div>
     </div>
 
-    <div class="row mb-5">
-        <div class="col-md-6">
-            <h2 class="mb-4">📈 Зачем нужен наш калькулятор?</h2>
-            <div class="list-group list-group-flush">
-                <div class="benefit-item d-flex align-items-center">
-                    <span class="benefit-icon">✅</span>
-                    <div>
-                        <h5 class="mb-1">Реальные цифры, а не догадки</h5>
-                        <p class="text-muted mb-0">Точный расчет по формулам РФ и статистике владельцев</p>
+    <div class="popular-models">
+        <h2 class="section-title">Популярные модели для расчета</h2>
+        <div class="row g-4">
+            
+            <div class="col-xl-3 col-lg-4 col-md-6">
+                <div class="car-card">
+                    <div class="car-image" data-car="toyota-mark2">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/f/ff/1998-2000_Toyota_Mark_II.jpg" 
+                             alt="Toyota Mark II JZX100"
+                             loading="lazy"
+                             onerror="loadBackupImage(this, 'toyota')">
+                        <div class="model-badge">JZX100</div>
                     </div>
-                </div>
-                <div class="benefit-item d-flex align-items-center">
-                    <span class="benefit-icon">💡</span>
-                    <div>
-                        <h5 class="mb-1">Учитываем все нюансы</h5>
-                        <p class="text-muted mb-0">Таможня, адаптация под РФ, специфические ремонты праворульных авто</p>
-                    </div>
-                </div>
-                <div class="benefit-item d-flex align-items-center">
-                    <span class="benefit-icon">📊</span>
-                    <div>
-                        <h5 class="mb-1">Наглядная аналитика</h5>
-                        <p class="text-muted mb-0">Графики и сравнения разных моделей</p>
+                    <div class="car-content">
+                        <h4 class="car-title">Toyota Mark II</h4>
+                        <div class="car-specs">1JZ-GTE • 2.5 л • 280 л.с. • RWD</div>
+                        <div class="car-price" data-base-price="500000" data-year="1998" data-engine="2.5">от 500 000 ¥</div>
+                        <div class="car-price-rub" id="toyota-price-rub">~ загрузка руб...</div>
+                        <a href="{% url 'calculation_create' %}?car=1&price=500000&year=1998&engine=2.5" class="car-btn">Рассчитать стоимость</a>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-6">
-            <div class="stats-section">
-                <h3 class="text-center mb-4">📊 Статистика пользователей</h3>
-                <div class="row text-center">
-                    <div class="col-6 mb-4">
-                        <div class="stat-number">85%</div>
-                        <div class="stat-label">Экономят на ремонтах</div>
+            
+            <div class="col-xl-3 col-lg-4 col-md-6">
+                <div class="car-card">
+                    <div class="car-image" data-car="nissan-gtr">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Nissan_Skyline_GT-R_R34_V_Spec_II.jpg/2560px-Nissan_Skyline_GT-R_R34_V_Spec_II.jpg" 
+                             alt="Nissan Skyline GT-R R34"
+                             loading="lazy"
+                             onerror="loadBackupImage(this, 'nissan')">
+                        <div class="model-badge">R34</div>
                     </div>
-                    <div class="col-6 mb-4">
-                        <div class="stat-number">+150</div>
-                        <div class="stat-label">Расчетов в день</div>
+                    <div class="car-content">
+                        <h4 class="car-title">Nissan Skyline GT-R</h4>
+                        <div class="car-specs">RB26DETT • 2.6 л • 320 л.с. • AWD</div>
+                        <div class="car-price" data-base-price="1200000" data-year="2001" data-engine="2.6">от 1 200 000 ¥</div>
+                        <div class="car-price-rub" id="nissan-price-rub">~ загрузка руб...</div>
+                        <a href="{% url 'calculation_create' %}?car=2&price=1200000&year=2001&engine=2.6" class="car-btn">Рассчитать стоимость</a>
                     </div>
-                    <div class="col-6">
-                        <div class="stat-number">2-3 года</div>
-                        <div class="stat-label">Окупаемость авто</div>
+                </div>
+            </div>
+            
+            <div class="col-xl-3 col-lg-4 col-md-6">
+                <div class="car-card">
+                    <div class="car-image" data-car="subaru-legacy">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/f/ff/08-Subaru-Legacy-SpecB.jpg" 
+                             alt="Subaru Legacy B4"
+                             loading="lazy"
+                             onerror="loadBackupImage(this, 'subaru')">
+                        <div class="model-badge">BL5</div>
                     </div>
-                    <div class="col-6">
-                        <div class="stat-number">30%</div>
-                        <div class="stat-label">Ниже рыночных цен</div>
+                    <div class="car-content">
+                        <h4 class="car-title">Subaru Legacy B4</h4>
+                        <div class="car-specs">EJ20 • 2.0 л • 250 л.с. • AWD • Turbo</div>
+                        <div class="car-price" data-base-price="400000" data-year="2005" data-engine="2.0">от 400 000 ¥</div>
+                        <div class="car-price-rub" id="subaru-price-rub">~ загрузка руб...</div>
+                        <a href="{% url 'calculation_create' %}?car=3&price=400000&year=2005&engine=2.0" class="car-btn">Рассчитать стоимость</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-xl-3 col-lg-4 col-md-6">
+                <div class="car-card">
+                    <div class="car-image" data-car="mitsubishi-evo">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Mitsubishi_Lancer_Evolution_VIII_-_001_%282%29.jpg" 
+                             alt="Mitsubishi Lancer Evolution VIII"
+                             loading="lazy"
+                             onerror="loadBackupImage(this, 'mitsubishi')">
+                        <div class="model-badge">EVO VIII</div>
+                    </div>
+                    <div class="car-content">
+                        <h4 class="car-title">Mitsubishi Lancer Evo</h4>
+                        <div class="car-specs">4G63 • 2.0 л • 280 л.с. • AWD • Recaro</div>
+                        <div class="car-price" data-base-price="900000" data-year="2003" data-engine="2.0">от 900 000 ¥</div>
+                        <div class="car-price-rub" id="mitsubishi-price-rub">~ загрузка руб...</div>
+                        <a href="{% url 'calculation_create' %}?car=4&price=900000&year=2003&engine=2.0" class="car-btn">Рассчитать стоимость</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <h2 class="text-center mb-5">✨ Что вы можете сделать?</h2>
-    <div class="row mb-5">
-        <div class="col-md-4 mb-4">
-            <div class="card feature-card text-center h-100">
-                <div class="card-body p-4">
+    <div class="features-section">
+        <h2 class="section-title">Возможности калькулятора</h2>
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-block">
                     <div class="feature-icon">🚗</div>
-                    <h4 class="card-title mb-3">Каталог авто</h4>
-                    <p class="card-text mb-4">
-                        Подробные карточки популярных праворульных моделей с техническими характеристиками, 
-                        средними ценами и отзывами владельцев.
-                    </p>
-                    <a href="{% url 'car_list' %}" class="btn btn-outline-primary btn-lg w-100">
-                        Смотреть каталог
-                    </a>
+                    <h3 class="feature-title">Каталог JDM авто</h3>
+                    <p class="feature-text">Более 100 популярных праворульных моделей с детальными характеристиками, ценами на аукционах и отзывами владельцев.</p>
+                    <a href="{% url 'car_list' %}" class="feature-btn">Смотреть каталог</a>
                 </div>
             </div>
-        </div>
-        
-        <div class="col-md-4 mb-4">
-            <div class="card feature-card text-center h-100">
-                <div class="card-body p-4">
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-block">
                     <div class="feature-icon">🧮</div>
-                    <h4 class="card-title mb-3">Расчет стоимости</h4>
-                    <p class="card-text mb-4">
-                        Точный калькулятор всех расходов на 1-5 лет вперед. 
-                        Учитываем регион, пробег, страховку и даже сезонные колебания цен.
-                    </p>
-                    <a href="{% url 'calculation_create' %}" class="btn btn-success btn-lg w-100">
-                        Рассчитать стоимость
-                    </a>
+                    <h3 class="feature-title">Точный расчет</h3>
+                    <p class="feature-text">Учитываем все расходы: таможню, доставку, растаможку, адаптацию, страховку, ТО и эксплуатационные затраты.</p>
+                    <a href="{% url 'calculation_create' %}" class="feature-btn">Рассчитать стоимость</a>
                 </div>
             </div>
-        </div>
-        
-        <div class="col-md-4 mb-4">
-            <div class="card feature-card text-center h-100">
-                <div class="card-body p-4">
-                    <div class="feature-icon">📈</div>
-                    <h4 class="card-title mb-3">Аналитика и сравнение</h4>
-                    <p class="card-text mb-4">
-                        Сравнивайте разные модели, стройте графики расходов, 
-                        получайте рекомендации по оптимизации бюджета.
-                    </p>
-                    <a href="{% url 'calculation_create' %}" class="btn btn-info btn-lg w-100">
-                        Сравнить авто
-                    </a>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-block">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">Аналитика и сравнение</h3>
+                    <p class="feature-text">Сравнивайте разные модели, смотрите графики расходов, получайте рекомендации по оптимизации бюджета.</p>
+                    <a href="{% url 'calculation_create' %}" class="feature-btn">Сравнить авто</a>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="text-center mb-5">
-        <h2 class="mb-4">🏆 Самые популярные модели для расчета</h2>
-        <p class="lead text-muted mb-4">Выберите автомобиль или добавьте свой</p>
+    <div class="currency-widget">
+        <div class="currency-header">
+            <h3 class="currency-title">💱 Актуальные курсы валют для расчета</h3>
+            <button class="currency-refresh-btn" id="refreshRates" title="Обновить курсы">
+                <i class="bi bi-arrow-clockwise"></i>
+            </button>
+        </div>
         
-        <div class="row justify-content-center">
-            <div class="col-md-3 col-sm-6 mb-3">
-                <div class="car-badge p-3">
-                    🗾 Toyota Mark II
-                    <div class="small mt-1">JZX100 • 1JZ-GTE</div>
+        <div class="currency-grid" id="currencyRates">
+            <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Загрузка курсов...</span>
+                </div>
+                <p class="text-muted mt-2">Загрузка курсов валют...</p>
+            </div>
+        </div>
+        
+        <div class="currency-timestamp" id="currencyTimestamp">
+            Обновлено: загрузка данных...
+        </div>
+        
+        <div class="currency-info">
+            <i class="bi bi-info-circle me-1"></i>
+            Курсы ЦБ РФ обновляются ежедневно и используются в калькуляторе стоимости
+        </div>
+        
+        <div id="currencyError" style="display: none;"></div>
+    </div>
+
+    <div class="stats-block">
+        <div class="row">
+            <div class="col-xl-3 col-md-6">
+                <div class="stat-item">
+                    <div class="stat-number">2,500+</div>
+                    <div class="stat-label">Расчетов выполнено</div>
                 </div>
             </div>
-            <div class="col-md-3 col-sm-6 mb-3">
-                <div class="car-badge p-3">
-                    🇯🇵 Nissan Skyline
-                    <div class="small mt-1">R34 • RB26DETT</div>
+            <div class="col-xl-3 col-md-6">
+                <div class="stat-item">
+                    <div class="stat-number">150+</div>
+                    <div class="stat-label">Моделей в базе</div>
                 </div>
             </div>
-            <div class="col-md-3 col-sm-6 mb-3">
-                <div class="car-badge p-3">
-                    🌟 Subaru Legacy
-                    <div class="small mt-1">BL5 • EJ20</div>
+            <div class="col-xl-3 col-md-6">
+                <div class="stat-item">
+                    <div class="stat-number">85%</div>
+                    <div class="stat-label">Точность расчетов</div>
                 </div>
             </div>
-            <div class="col-md-3 col-sm-6 mb-3">
-                <div class="car-badge p-3">
-                    ⚡ Mitsubishi Lancer
-                    <div class="small mt-1">Evo • 4G63</div>
+            <div class="col-xl-3 col-md-6">
+                <div class="stat-item">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Работа калькулятора</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="text-center mt-5 pt-5">
-        <h2 class="mb-4">Готовы узнать реальную стоимость?</h2>
-        <p class="lead mb-4">Пройдите 3 простых шага и получите детальный расчет на 5 лет</p>
-        <div class="row justify-content-center mb-4">
-            <div class="col-md-4">
-                <div class="p-3">
-                    <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px; font-size: 1.5rem;">1</div>
-                    <h5 class="mt-3">Выберите авто</h5>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="p-3">
-                    <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px; font-size: 1.5rem;">2</div>
-                    <h5 class="mt-3">Укажите параметры</h5>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="p-3">
-                    <div class="rounded-circle bg-info text-white d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px; font-size: 1.5rem;">3</div>
-                    <h5 class="mt-3">Получите расчет</h5>
-                </div>
-            </div>
+    <div class="cta-block">
+        <h2 class="cta-title">Готовы узнать реальную стоимость?</h2>
+        <p class="cta-text">Получите детальный расчет стоимости владения праворульным автомобилем на 1-5 лет. Учитываем все нюансы и предоставляем точные цифры.</p>
+        <div class="cta-buttons">
+            <a href="{% url 'calculation_create' %}" class="cta-btn">
+                <i class="bi bi-calculator me-2"></i>Бесплатный расчет
+            </a>
+            <a href="{% url 'car_list' %}" class="btn btn-outline-light">
+                <i class="bi bi-car-front me-2"></i>Выбрать авто
+            </a>
         </div>
-        <a href="{% url 'calculation_create' %}" class="btn btn-dark btn-lg cta-button px-5">
-            🚀 Начать бесплатный расчет
-        </a>
-        <p class="text-muted mt-3">Никаких регистраций и подписок. Просто точные цифры.</p>
     </div>
 </div>
 {% endblock %}
@@ -441,70 +944,175 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Анимация карточек
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = 1;
-                entry.target.style.transform = 'translateY(0)';
+    let currentRates = {};
+    let selectedCurrency = 'JPY';
+    
+    const backupImages = {
+        toyota: [
+            'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Toyota_Mark_II_%28JZX100%29_front.jpg/800px-Toyota_Mark_II_%28JZX100%29_front.jpg',
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjLfFOM50Hgyghv9gq_J9dYJTbn6W5aFW7Sw&s',
+            'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'
+        ],
+        nissan: [
+            'https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Nissan_Skyline_GT-R_R34.jpg/800px-Nissan_Skyline_GT-R_R34.jpg',
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKUwszh8gO99JjOWlhfnrnnD5Q4Z93dcmuzQ&s',
+            'https://images.unsplash.com/photo-1555212697-194d092e3b8f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'
+        ],
+        subaru: [
+            'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Subaru_Legacy_B4.jpg/800px-Subaru_Legacy_B4.jpg',
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTf_K1T2jYiwqUCLmObFssVwPpn_7hYqZP1vw&s',
+            'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'
+        ],
+        mitsubishi: [
+            'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Mitsubishi_Lancer_Evolution_VIII.jpg/800px-Mitsubishi_Lancer_Evolution_VIII.jpg',
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzgeefsKV66PQbf26Xx0NUPeEogz9s41Hg1g&s',
+            'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'
+        ]
+    };
+    
+    function loadBackupImage(imgElement, carType) {
+        const carImage = imgElement.parentElement;
+        const backupUrls = backupImages[carType];
+        let currentIndex = parseInt(carImage.dataset.backupIndex) || 0;
+        
+        if (currentIndex < backupUrls.length) {
+            imgElement.style.opacity = '0';
+            imgElement.src = backupUrls[currentIndex];
+            carImage.dataset.backupIndex = currentIndex + 1;
+            
+            imgElement.onload = function() {
+                imgElement.style.opacity = '1';
+                imgElement.style.transition = 'opacity 0.3s ease';
+            };
+            
+            imgElement.onerror = function() {
+                if (currentIndex < backupUrls.length - 1) {
+                    setTimeout(() => loadBackupImage(imgElement, carType), 100);
+                } else {
+                    showPlaceholder(imgElement);
+                }
+            };
+        } else {
+            showPlaceholder(imgElement);
+        }
+    }
+    
+    function showPlaceholder(imgElement) {
+        const placeholder = imgElement.parentElement.querySelector('.placeholder');
+        if (placeholder) {
+            placeholder.style.display = 'flex';
+            placeholder.classList.add('bg-image');
+        }
+    }
+    
+    function checkImageLoad() {
+        document.querySelectorAll('.car-image img').forEach(img => {
+            if (img.complete) {
+                if (img.naturalHeight === 0) {
+                    const carType = img.parentElement.dataset.car.split('-')[0];
+                    loadBackupImage(img, carType);
+                }
+            } else {
+                img.addEventListener('load', function() {
+                    if (this.naturalHeight === 0) {
+                        const carType = this.parentElement.dataset.car.split('-')[0];
+                        loadBackupImage(this, carType);
+                    }
+                });
+                
+                img.addEventListener('error', function() {
+                    const carType = this.parentElement.dataset.car.split('-')[0];
+                    loadBackupImage(this, carType);
+                });
             }
         });
-    });
+    }
     
-    document.querySelectorAll('.feature-card').forEach(card => {
-        card.style.opacity = 0;
-        card.style.transform = 'translateY(20px)';
-        card.style.transition = 'opacity 0.5s, transform 0.5s';
-        observer.observe(card);
-    });
+    function formatNumber(num) {
+        return new Intl.NumberFormat('ru-RU', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 4
+        }).format(num);
+    }
     
-    document.querySelectorAll('.car-badge').forEach(badge => {
-        badge.addEventListener('mouseenter', function() {
-            this.style.transform = 'scale(1.05) rotate(1deg)';
-        });
-        badge.addEventListener('mouseleave', function() {
-            this.style.transform = 'scale(1) rotate(0)';
-        });
-    });
+    function formatInteger(num) {
+        return new Intl.NumberFormat('ru-RU', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        }).format(num);
+    }
     
-    // Загрузка курсов валют
-    function loadCurrencyRates() {
+    async function loadCurrencyRates() {
         const ratesContainer = document.getElementById('currencyRates');
         const timestampElement = document.getElementById('currencyTimestamp');
         const refreshButton = document.getElementById('refreshRates');
+        const errorContainer = document.getElementById('currencyError');
         
         refreshButton.innerHTML = '<i class="bi bi-arrow-clockwise"></i>';
         refreshButton.disabled = true;
+        errorContainer.style.display = 'none';
         
-        fetch('/api/currency/all/')
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    const rates = data.rates;
+        try {
+            const response = await fetch('/api/currency/all/', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                timeout: 10000
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                
+                if (data.success && data.rates) {
                     const currencies = [
-                        { code: 'JPY', name: 'Японская йена', emoji: '🇯🇵' },
-                        { code: 'USD', name: 'Доллар США', emoji: '🇺🇸' },
-                        { code: 'EUR', name: 'Евро', emoji: '🇪🇺' },
-                        { code: 'CNY', name: 'Китайский юань', emoji: '🇨🇳' },
+                        { 
+                            code: 'JPY', 
+                            name: 'Японская йена', 
+                            pair: 'JPY → RUB',
+                            isMain: true
+                        },
+                        { 
+                            code: 'USD', 
+                            name: 'Доллар США', 
+                            pair: 'USD → RUB',
+                            isMain: false
+                        },
+                        { 
+                            code: 'EUR', 
+                            name: 'Евро', 
+                            pair: 'EUR → RUB',
+                            isMain: false
+                        },
+                        { 
+                            code: 'CNY', 
+                            name: 'Китайский юань', 
+                            pair: 'CNY → RUB',
+                            isMain: false
+                        },
                     ];
                     
                     let html = '';
                     
                     currencies.forEach(currency => {
-                        const rate = rates[currency.code] || 0;
-                        const change = Math.random() > 0.5 ? 
-                            (Math.random() * 0.8).toFixed(1) + '%' : 
-                            '-' + (Math.random() * 0.5).toFixed(1) + '%';
+                        const rate = data.rates[currency.code] || 0;
+                        const prevRate = currentRates[currency.code] || rate;
+                        const change = ((rate - prevRate) / prevRate * 100).toFixed(2);
+                        const changeFormatted = change >= 0 ? `+${change}%` : `${change}%`;
+                        const isPositive = change >= 0;
                         
-                        const isPositive = !change.startsWith('-');
+                        currentRates[currency.code] = rate;
                         
                         html += `
-                            <div class="currency-item">
-                                <div class="currency-code">${currency.emoji} ${currency.code}</div>
+                            <div class="currency-item ${currency.isMain ? 'active' : ''}" 
+                                 data-currency="${currency.code}" 
+                                 data-rate="${rate}"
+                                 title="Кликните для использования в расчетах">
+                                <div class="currency-code">${currency.pair}</div>
                                 <div class="currency-name">${currency.name}</div>
-                                <div class="currency-rate">${rate.toFixed(2)} ₽</div>
-                                <div class="currency-change ${isPositive ? 'positive' : 'negative'}">
-                                    ${change}
+                                <div class="currency-rate">${formatNumber(rate)} ₽</div>
+                                <div class="currency-change ${isPositive ? 'change-up' : 'change-down'}">
+                                    ${changeFormatted}
                                 </div>
                             </div>
                         `;
@@ -512,32 +1120,212 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     ratesContainer.innerHTML = html;
                     
-                    const updateTime = new Date(data.timestamp);
-                    timestampElement.textContent = `Обновлено: ${updateTime.toLocaleTimeString('ru-RU')}`;
+                    document.querySelectorAll('.currency-item').forEach(item => {
+                        item.addEventListener('click', function() {
+                            document.querySelectorAll('.currency-item').forEach(i => {
+                                i.classList.remove('active');
+                            });
+                            
+                            this.classList.add('active');
+                            selectedCurrency = this.dataset.currency;
+                            
+                            updateCarPrices();
+                            
+                            saveCurrencyPreference();
+                        });
+                    });
+                    
+                    const updateTime = new Date(data.timestamp || Date.now());
+                    timestampElement.textContent = `Обновлено: ${updateTime.toLocaleTimeString('ru-RU', { 
+                        hour: '2-digit', 
+                        minute: '2-digit'
+                    })}`;
+                    
+                    updateCarPrices();
+                    
+                    saveCurrencyPreference();
+                    
                 } else {
-                    timestampElement.textContent = 'Ошибка загрузки данных';
+                    throw new Error('Неверный формат данных');
                 }
-            })
-            .catch(error => {
-                console.error('Error loading currency rates:', error);
-                timestampElement.textContent = 'Ошибка загрузки данных';
-            })
-            .finally(() => {
-                refreshButton.disabled = false;
-            });
+                
+            } else {
+                throw new Error('API недоступен');
+            }
+            
+        } catch (error) {
+            console.error('Error loading currency rates:', error);
+            
+            showFallbackRates();
+            
+            errorContainer.innerHTML = `
+                <div class="currency-error">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    Не удалось загрузить актуальные курсы. Используются резервные данные.
+                </div>
+            `;
+            errorContainer.style.display = 'block';
+            
+            timestampElement.textContent = 'Используются резервные данные';
+            
+        } finally {
+            refreshButton.disabled = false;
+        }
     }
     
-    // Кнопка обновления
+    function showFallbackRates() {
+        const ratesContainer = document.getElementById('currencyRates');
+        const currencies = [
+            { 
+                code: 'JPY', 
+                name: 'Японская йена', 
+                pair: 'JPY → RUB',
+                isMain: true,
+                rate: 0.60
+            },
+            { 
+                code: 'USD', 
+                name: 'Доллар США', 
+                pair: 'USD → RUB',
+                isMain: false,
+                rate: 90.50
+            },
+            { 
+                code: 'EUR', 
+                name: 'Евро', 
+                pair: 'EUR → RUB',
+                isMain: false,
+                rate: 98.20
+            },
+            { 
+                code: 'CNY', 
+                name: 'Китайский юань', 
+                pair: 'CNY → RUB',
+                isMain: false,
+                rate: 12.50
+            },
+        ];
+        
+        let html = '';
+        
+        currencies.forEach(currency => {
+            const rate = currency.rate;
+            currentRates[currency.code] = rate;
+            
+            html += `
+                <div class="currency-item ${currency.isMain ? 'active' : ''}" 
+                     data-currency="${currency.code}" 
+                     data-rate="${rate}"
+                     title="Резервные данные">
+                    <div class="currency-code">${currency.pair}</div>
+                    <div class="currency-name">${currency.name}</div>
+                    <div class="currency-rate">${formatNumber(rate)} ₽</div>
+                    <div class="currency-change change-up">
+                        +0.0%
+                    </div>
+                </div>
+            `;
+        });
+        
+        ratesContainer.innerHTML = html;
+        
+        updateCarPrices();
+    }
+    
+    function updateCarPrices() {
+        const jpyRate = currentRates['JPY'] || 0.60;
+        
+        const carCards = document.querySelectorAll('.car-card');
+        
+        carCards.forEach(card => {
+            const priceElement = card.querySelector('.car-price');
+            const rubPriceElement = card.querySelector('.car-price-rub');
+            const basePrice = parseFloat(priceElement.dataset.basePrice);
+            
+            if (basePrice && jpyRate > 0) {
+                const priceInRub = basePrice * jpyRate;
+                
+                const formattedPrice = formatInteger(Math.round(priceInRub));
+                
+                rubPriceElement.textContent = `~ ${formattedPrice} ₽`;
+                rubPriceElement.style.color = '#ff3b30';
+                rubPriceElement.style.fontWeight = '600';
+                
+                const linkElement = card.querySelector('.car-btn');
+                const currentHref = linkElement.getAttribute('href').split('?')[0];
+                const year = priceElement.dataset.year;
+                const engine = priceElement.dataset.engine;
+                
+                linkElement.setAttribute('href', 
+                    `${currentHref}?price=${basePrice}&year=${year}&engine=${engine}&rate=${jpyRate}`
+                );
+            }
+        });
+    }
+    
+    function saveCurrencyPreference() {
+        localStorage.setItem('selectedCurrency', selectedCurrency);
+        localStorage.setItem('currencyRates', JSON.stringify(currentRates));
+        localStorage.setItem('currencyTimestamp', new Date().toISOString());
+    }
+    
+    function loadCurrencyPreference() {
+        const savedCurrency = localStorage.getItem('selectedCurrency');
+        const savedRates = localStorage.getItem('currencyRates');
+        const savedTimestamp = localStorage.getItem('currencyTimestamp');
+        
+        if (savedCurrency) {
+            selectedCurrency = savedCurrency;
+        }
+        
+        if (savedRates) {
+            try {
+                currentRates = JSON.parse(savedRates);
+            } catch (e) {
+                currentRates = {};
+            }
+        }
+        
+        if (savedTimestamp) {
+            const lastUpdate = new Date(savedTimestamp);
+            const now = new Date();
+            const hoursDiff = (now - lastUpdate) / (1000 * 60 * 60);
+            
+            if (hoursDiff > 6) {
+                console.log('Курсы устарели, обновляем...');
+                loadCurrencyRates();
+                return;
+            }
+        }
+        
+        if (Object.keys(currentRates).length > 0) {
+            updateCarPrices();
+        }
+    }
+    
     document.getElementById('refreshRates').addEventListener('click', function() {
         this.innerHTML = '<div class="spinner-border spinner-border-sm"></div>';
         loadCurrencyRates();
     });
     
-    // Загружаем курсы при загрузке страницы
+    loadCurrencyPreference();
     loadCurrencyRates();
     
-    // Обновляем каждые 5 минут
-    setInterval(loadCurrencyRates, 300000);
+    setInterval(loadCurrencyRates, 30 * 60 * 1000);
+    
+    setTimeout(checkImageLoad, 500);
+    
+    window.addEventListener('load', function() {
+        checkImageLoad();
+        
+        if (Object.keys(currentRates).length === 0) {
+            setTimeout(() => {
+                if (Object.keys(currentRates).length === 0) {
+                    showFallbackRates();
+                }
+            }, 3000);
+        }
+    });
 });
 </script>
 {% endblock %}

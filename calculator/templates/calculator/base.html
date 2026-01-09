@@ -3,128 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}🚗 Калькулятор стоимости праворульных авто{% endblock %}</title>
+    <title>{% block title %}Калькулятор стоимости праворульного авто - JDM Calculator{% endblock %}</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --primary-color: #4361ee;
-            --secondary-color: #3a0ca3;
-            --accent-color: #f72585;
-            --dark-color: #1a1a2e;
-            --light-color: #f8f9fa;
-            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --gradient-accent: linear-gradient(45deg, #FF416C, #FF4B2B);
+            --primary-red: #ff3b30;
+            --dark-bg: #1a1a1a;
+            --dark-card: #2a2a2a;
+            --gray-light: #f8f9fa;
+            --gray-border: #e8e8e8;
+            --text-dark: #1a1a1a;
+            --text-gray: #555;
+            --text-light: #888;
         }
         
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #fefefe;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f8f9fa;
             color: #333;
             line-height: 1.6;
+            padding-top: 80px;
         }
         
         .navbar {
-            background: var(--gradient-primary) !important;
-            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
-            padding: 15px 0;
-            transition: all 0.3s;
-        }
-        
-        .navbar.scrolled {
-            padding: 10px 0;
-            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4);
+            background: #1a1a1a !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 12px 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
         }
         
         .navbar-brand {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 800;
-            font-size: 1.8rem;
+            font-weight: 700;
+            font-size: 1.5rem;
             color: white !important;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-            transition: transform 0.3s;
         }
         
-        .navbar-brand:hover {
-            transform: scale(1.05);
+        .navbar-brand i {
+            color: #ff3b30;
         }
         
         .nav-link {
-            color: rgba(255, 255, 255, 0.9) !important;
+            color: rgba(255, 255, 255, 0.8) !important;
             font-weight: 500;
-            margin: 0 8px;
             padding: 8px 16px !important;
-            border-radius: 25px;
+            border-radius: 4px;
+            margin: 0 5px;
             transition: all 0.3s;
         }
         
         .nav-link:hover {
             color: white !important;
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.1);
         }
         
         .nav-link.active {
-            background: rgba(255, 255, 255, 0.2);
+            background: #ff3b30;
             color: white !important;
         }
         
-        .user-greeting {
-            background: var(--gradient-accent);
-            padding: 6px 15px;
-            border-radius: 20px;
-            color: white;
-            font-weight: 600;
-        }
-        
         .login-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid white;
+            background: #ff3b30;
+            border: none;
             color: white;
-            padding: 6px 20px;
-            border-radius: 25px;
+            padding: 8px 20px;
+            border-radius: 4px;
             font-weight: 600;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: all 0.3s;
         }
         
         .login-btn:hover {
+            background: #e0352a;
+            color: white;
+            transform: translateY(-1px);
+        }
+        
+        .user-greeting {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 6px 15px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        .container {
+            max-width: 1200px;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+        
+        .card {
             background: white;
-            color: var(--primary-color);
-            transform: translateY(-2px);
+            border-radius: 10px;
+            border: 1px solid #e8e8e8;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s;
         }
         
-        .main-container {
-            min-height: calc(100vh - 180px);
-            padding: 40px 0;
-            animation: fadeIn 0.8s ease-out;
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+            border-color: #ff3b30;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .alert {
-            border-radius: 15px;
+        .btn-danger {
+            background: #ff3b30;
             border: none;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            animation: slideDown 0.5s ease-out;
+            font-weight: 600;
         }
         
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .btn-danger:hover {
+            background: #e0352a;
+        }
+        
+        .btn-outline-dark {
+            border: 2px solid #1a1a1a;
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+        
+        .btn-outline-dark:hover {
+            background: #1a1a1a;
+            color: white;
+        }
+        
+        .form-control {
+            border: 2px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 10px 15px;
+        }
+        
+        .form-control:focus {
+            border-color: #ff3b30;
+            box-shadow: none;
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 30px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #ff3b30;
+            display: inline-block;
         }
         
         .footer {
-            background: var(--dark-color);
+            background: #1a1a1a;
             color: white;
             padding: 40px 0 20px;
             margin-top: 80px;
-            border-radius: 30px 30px 0 0;
         }
         
         .footer p {
@@ -134,7 +171,6 @@
         .footer-links a {
             color: rgba(255, 255, 255, 0.7);
             text-decoration: none;
-            margin: 0 15px;
             transition: color 0.3s;
         }
         
@@ -156,50 +192,49 @@
         }
         
         .social-icons a:hover {
-            background: var(--accent-color);
-            transform: translateY(-5px);
+            background: #ff3b30;
         }
         
-        .page-loading {
+        #page-preloader {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: var(--gradient-primary);
+            background: #1a1a1a;
+            z-index: 9999;
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 9999;
-            opacity: 1;
-            transition: opacity 0.5s;
+            transition: opacity 0.3s ease;
         }
         
-        .loader {
+        .spinner {
             width: 50px;
             height: 50px;
-            border: 5px solid rgba(255, 255, 255, 0.3);
+            border: 4px solid rgba(255, 59, 48, 0.3);
+            border-top: 4px solid #ff3b30;
             border-radius: 50%;
-            border-top-color: white;
             animation: spin 1s linear infinite;
         }
         
         @keyframes spin {
+            0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
         
         @media (max-width: 768px) {
+            .container {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+            
             .navbar-brand {
+                font-size: 1.3rem;
+            }
+            
+            .section-title {
                 font-size: 1.5rem;
-            }
-            
-            .nav-link {
-                margin: 5px 0;
-                text-align: center;
-            }
-            
-            .main-container {
-                padding: 20px 0;
             }
         }
     </style>
@@ -207,14 +242,14 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <div class="page-loading" id="pageLoading">
-        <div class="loader"></div>
+    <div id="page-preloader">
+        <div class="spinner"></div>
     </div>
 
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
             <a class="navbar-brand" href="{% url 'home' %}">
-                <i class="bi bi-car-front-fill me-2"></i>JDM Calculator
+                <i class="bi bi-car-front me-2"></i>JDM Calculator
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -229,7 +264,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link {% if 'cars' in request.path %}active{% endif %}" href="{% url 'car_list' %}">
                             <i class="bi bi-list-ul me-1"></i>Каталог авто
                         </a>
                     </li>
@@ -240,6 +275,11 @@
                     </li>
                     
                     {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'my-calculations' in request.path %}active{% endif %}" href="{% url 'my_calculations' %}">
+                            <i class="bi bi-folder me-1"></i>Мои расчеты
+                        </a>
+                    </li>
                     <li class="nav-item">
                         <span class="nav-link user-greeting">
                             <i class="bi bi-person-circle me-1"></i>{{ user.username }}
@@ -262,32 +302,28 @@
         </div>
     </nav>
 
-    <div class="main-container" style="padding-top: 90px;">
-        <div class="container">
+    <main>
+        <div class="container py-4">
             {% if messages %}
-                <div class="row">
-                    <div class="col-md-8 offset-md-2">
-                        {% for message in messages %}
-                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
-                                {{ message }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            </div>
-                        {% endfor %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
-                </div>
+                {% endfor %}
             {% endif %}
             
             {% block content %}
             {% endblock %}
         </div>
-    </div>
+    </main>
 
     <footer class="footer">
         <div class="container">
             <div class="row">
                 <div class="col-md-4 mb-4">
                     <h5 class="mb-3">
-                        <i class="bi bi-car-front-fill me-2"></i>JDM Calculator
+                        <i class="bi bi-car-front me-2"></i>JDM Calculator
                     </h5>
                     <p>Точный расчет стоимости владения праворульными автомобилями в России. Планируйте бюджет с умом.</p>
                     <div class="social-icons mt-3">
@@ -303,7 +339,9 @@
                         <p><a href="{% url 'home' %}"><i class="bi bi-chevron-right me-1"></i>Главная</a></p>
                         <p><a href="{% url 'car_list' %}"><i class="bi bi-chevron-right me-1"></i>Каталог авто</a></p>
                         <p><a href="{% url 'calculation_create' %}"><i class="bi bi-chevron-right me-1"></i>Калькулятор</a></p>
-                        <p><a href="/admin/"><i class="bi bi-chevron-right me-1"></i>Админ-панель</a></p>
+                        {% if user.is_authenticated %}
+                        <p><a href="{% url 'my_calculations' %}"><i class="bi bi-chevron-right me-1"></i>Мои расчеты</a></p>
+                        {% endif %}
                     </div>
                 </div>
                 
@@ -319,7 +357,7 @@
             
             <div class="row">
                 <div class="col-md-6">
-                    <p class="mb-0">© 2024 Калькулятор стоимости владения праворульным автомобилем</p>
+                    <p class="mb-0">© 2026 Калькулятор стоимости владения праворульным автомобилем</p>
                 </div>
                 <div class="col-md-6 text-md-end">
                     <p class="mb-0">Учебный проект по Django | Разработано с ❤️</p>
@@ -332,44 +370,23 @@
     
     <script>
         window.addEventListener('load', function() {
-            setTimeout(function() {
-                document.getElementById('pageLoading').style.opacity = '0';
+            const preloader = document.getElementById('page-preloader');
+            if (preloader) {
                 setTimeout(function() {
-                    document.getElementById('pageLoading').style.display = 'none';
-                }, 500);
-            }, 300);
-        });
-
-        window.addEventListener('scroll', function() {
-            const navbar = document.querySelector('.navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
+                    preloader.style.opacity = '0';
+                    setTimeout(function() {
+                        preloader.style.display = 'none';
+                    }, 300);
+                }, 300);
             }
         });
 
         document.addEventListener('DOMContentLoaded', function() {
             const currentPath = window.location.pathname;
             document.querySelectorAll('.nav-link').forEach(link => {
-                if (link.getAttribute('href') === currentPath) {
+                const href = link.getAttribute('href');
+                if (href && currentPath.includes(href.replace('/', ''))) {
                     link.classList.add('active');
-                }
-            });
-        });
-
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href');
-                if (targetId === '#') return;
-                
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 80,
-                        behavior: 'smooth'
-                    });
                 }
             });
         });

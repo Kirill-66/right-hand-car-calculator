@@ -48,33 +48,17 @@ class RightHandCar(models.Model):
         help_text="л/100км средний"
     )
     
-    # ⚠️ ПРОБЛЕМНЫЕ ПОЛЯ - комментируем или удаляем
-    # power_hp = models.IntegerField(
-    #     verbose_name="Мощность (л.с.)",
-    #     null=True,
-    #     blank=True
-    # )
-    # 
-    # drive_type = models.CharField(
-    #     max_length=10,
-    #     choices=[
-    #         ('fwd', 'Передний'),
-    #         ('rwd', 'Задний'),
-    #         ('awd', 'Полный'),
-    #     ],
-    #     verbose_name="Привод",
-    #     null=True,
-    #     blank=True
-    # )
-    
     description = models.TextField(
         verbose_name="Описание",
         blank=True
     )
     
     image_url = models.URLField(
-        verbose_name="Ссылка на изображение",
-        blank=True
+        'URL изображения',
+        max_length=500,
+        blank=True,
+        null=True,
+        help_text='Ссылка на фото автомобиля (рекомендуется 400x250px)'
     )
     
     created_at = models.DateTimeField(

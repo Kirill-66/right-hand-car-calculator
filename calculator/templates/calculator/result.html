@@ -5,50 +5,105 @@
 {% block extra_css %}
 <style>
     .result-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
         color: white;
-        padding: 60px 0;
-        border-radius: 0 0 30px 30px;
-        margin-bottom: 50px;
+        padding: 60px 0 40px;
+        margin-bottom: 30px;
+        border-radius: 0 0 8px 8px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .result-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 50%;
+        height: 100%;
+        background: 
+            radial-gradient(circle at 70% 30%, rgba(255, 59, 48, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 30% 70%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+    }
+    
+    .result-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        line-height: 1.2;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .result-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        max-width: 600px;
+        margin-bottom: 25px;
+        position: relative;
+        z-index: 1;
     }
     
     .total-cost-card {
         background: white;
-        border-radius: 20px;
+        border-radius: 10px;
         padding: 40px;
         text-align: center;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        box-shadow: 0 3px 20px rgba(0,0,0,0.08);
+        border: 1px solid #e8e8e8;
         margin-bottom: 30px;
-        border: 2px solid #667eea;
+        border-top: 4px solid #ff3b30;
     }
     
     .total-amount {
-        font-size: 3.5rem;
+        font-size: 3rem;
         font-weight: 800;
-        color: #667eea;
+        color: #ff3b30;
         margin: 20px 0;
     }
     
     .cost-per-year {
-        font-size: 1.5rem;
+        font-size: 1.3rem;
         color: #666;
-        margin-bottom: 30px;
+        margin-bottom: 15px;
+    }
+    
+    .cost-detail {
+        color: #888;
+        font-size: 1rem;
     }
     
     .breakdown-card {
         background: white;
-        border-radius: 20px;
+        border-radius: 10px;
         padding: 30px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        border: 1px solid #e8e8e8;
         margin-bottom: 30px;
+    }
+    
+    .breakdown-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #f0f0f0;
+        display: flex;
+        align-items: center;
+    }
+    
+    .breakdown-title i {
+        color: #ff3b30;
+        margin-right: 10px;
     }
     
     .cost-item {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 15px 0;
-        border-bottom: 1px solid #eee;
+        padding: 18px 0;
+        border-bottom: 1px solid #f8f9fa;
     }
     
     .cost-item:last-child {
@@ -59,76 +114,146 @@
         display: flex;
         align-items: center;
         font-weight: 500;
+        color: #333;
     }
     
     .cost-icon {
         width: 40px;
         height: 40px;
-        background: #f0f0f0;
-        border-radius: 10px;
+        background: #f8f9fa;
+        border-radius: 8px;
         display: flex;
         align-items: center;
         justify-content: center;
         margin-right: 15px;
-        color: #667eea;
+        color: #ff3b30;
         font-size: 1.2rem;
+        border: 1px solid #e8e8e8;
     }
     
     .cost-amount {
         font-weight: 600;
-        font-size: 1.2rem;
-        color: #333;
+        font-size: 1.1rem;
+        color: #1a1a1a;
     }
     
     .percentage {
         font-size: 0.9rem;
         color: #666;
         margin-left: 10px;
+        font-weight: 500;
+    }
+    
+    .actions-section {
+        background: white;
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        border: 1px solid #e8e8e8;
+        margin-bottom: 30px;
     }
     
     .action-buttons {
         display: flex;
         gap: 15px;
         justify-content: center;
-        margin-top: 40px;
+        flex-wrap: wrap;
     }
     
     .btn-print {
-        background: linear-gradient(45deg, #6c757d, #495057);
-        color: white;
+        background: #1a1a1a;
         border: none;
+        color: white;
         padding: 12px 30px;
-        border-radius: 25px;
         font-weight: 600;
+        border-radius: 4px;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .btn-print:hover {
+        background: #333;
+        color: white;
+        text-decoration: none;
+        transform: translateY(-2px);
     }
     
     .btn-new {
-        background: linear-gradient(45deg, #11998e, #38ef7d);
-        color: white;
+        background: #ff3b30;
         border: none;
+        color: white;
         padding: 12px 30px;
-        border-radius: 25px;
         font-weight: 600;
+        border-radius: 4px;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .btn-new:hover {
+        background: #e0352a;
+        color: white;
+        text-decoration: none;
+        transform: translateY(-2px);
+    }
+    
+    .btn-outline {
+        background: white;
+        border: 2px solid #1a1a1a;
+        color: #1a1a1a;
+        padding: 12px 30px;
+        font-weight: 600;
+        border-radius: 4px;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .btn-outline:hover {
+        background: #f8f9fa;
+        border-color: #ff3b30;
+        color: #ff3b30;
+        text-decoration: none;
     }
     
     .car-info-card {
         background: white;
-        border-radius: 20px;
+        border-radius: 10px;
         padding: 25px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        border: 1px solid #e8e8e8;
+        margin-bottom: 30px;
+    }
+    
+    .car-info-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .car-info-title i {
+        color: #ff3b30;
+        margin-right: 10px;
     }
     
     .info-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 15px;
-        margin-top: 20px;
     }
     
     .info-item {
         background: #f8f9fa;
         padding: 15px;
-        border-radius: 10px;
+        border-radius: 6px;
+        border: 1px solid #e8e8e8;
     }
     
     .info-label {
@@ -139,57 +264,158 @@
     
     .info-value {
         font-weight: 600;
-        color: #333;
+        color: #1a1a1a;
+        font-size: 1.1rem;
     }
     
     .currency-card {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        color: white;
-        border-radius: 15px;
-        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        border: 1px solid #e8e8e8;
+        margin-bottom: 30px;
+        border-left: 4px solid #ff3b30;
+    }
+    
+    .currency-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1a1a1a;
         margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .currency-title i {
+        color: #ff3b30;
+        margin-right: 10px;
     }
     
     .currency-rate {
-        font-size: 2rem;
+        font-size: 1.8rem;
         font-weight: 700;
+        color: #ff3b30;
         margin: 10px 0;
     }
     
     .currency-label {
         font-size: 0.9rem;
-        opacity: 0.9;
+        color: #666;
+    }
+    
+    .tips-card {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        border: 1px solid #e8e8e8;
+        margin-bottom: 30px;
+    }
+    
+    .tips-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .tips-title i {
+        color: #ff3b30;
+        margin-right: 10px;
+    }
+    
+    .tips-list {
+        margin: 0;
+        padding-left: 20px;
+        color: #555;
+    }
+    
+    .tips-list li {
+        margin-bottom: 10px;
+        line-height: 1.5;
+    }
+    
+    .save-card {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        border: 1px solid #e8e8e8;
+    }
+    
+    .save-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .save-title i {
+        color: #ff3b30;
+        margin-right: 10px;
+    }
+    
+    .save-text {
+        color: #666;
+        margin-bottom: 20px;
+        line-height: 1.6;
+    }
+    
+    @media (max-width: 768px) {
+        .result-header {
+            padding: 40px 0 30px;
+        }
+        
+        .result-title {
+            font-size: 1.8rem;
+        }
+        
+        .total-amount {
+            font-size: 2.5rem;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+        }
+        
+        .btn-print, .btn-new, .btn-outline {
+            width: 100%;
+        }
+        
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- Шапка результата -->
 <div class="result-header">
-    <div class="container text-center">
-        <h1 class="display-4 fw-bold mb-3">📊 Результат расчета</h1>
-        <p class="lead mb-0">Полная стоимость владения на {{ years }} года</p>
+    <div class="container">
+        <h1 class="result-title">📊 Результат расчета</h1>
+        <p class="result-subtitle">Полная стоимость владения праворульным автомобилем на {{ years }} года</p>
     </div>
 </div>
 
 <div class="container">
     <div class="row">
         <div class="col-lg-8">
-            <!-- Итоговая стоимость -->
             <div class="total-cost-card">
                 <h3 class="mb-3">Итоговая стоимость владения</h3>
                 <div class="total-amount">{{ total_cost|floatformat:0 }} ₽</div>
-                <div class="cost-per-year">
-                    ≈ {{ per_year|floatformat:0 }} ₽ в год
-                </div>
-                <p class="text-muted">
-                    Сверх стоимости автомобиля {{ price_rub|floatformat:0 }} ₽
+                <div class="cost-per-year">≈ {{ per_year|floatformat:0 }} ₽ в год</div>
+                <p class="cost-detail">
+                    Дополнительные расходы сверх стоимости автомобиля {{ price_rub|floatformat:0 }} ₽
                 </p>
             </div>
             
-            <!-- Детализация расходов -->
             <div class="breakdown-card">
-                <h4 class="mb-4">📈 Детализация расходов</h4>
+                <h3 class="breakdown-title"><i class="bi bi-pie-chart"></i>Детализация расходов</h3>
                 
                 <div class="cost-item">
                     <div class="cost-label">
@@ -198,7 +424,7 @@
                     </div>
                     <div class="cost-amount">
                         {{ breakdown.customs|floatformat:0 }} ₽
-                        <span class="percentage">({{ breakdown.customs|divide:total_cost|percentage }})</span>
+                        <span class="percentage">({{ breakdown.customs_percent }}%)</span>
                     </div>
                 </div>
                 
@@ -209,29 +435,29 @@
                     </div>
                     <div class="cost-amount">
                         {{ breakdown.adaptation|floatformat:0 }} ₽
-                        <span class="percentage">({{ breakdown.adaptation|divide:total_cost|percentage }})</span>
+                        <span class="percentage">({{ breakdown.adaptation_percent }}%)</span>
                     </div>
                 </div>
                 
                 <div class="cost-item">
                     <div class="cost-label">
                         <div class="cost-icon">🛡️</div>
-                        <div>Страховка ({{ years }} года)</div>
+                        <div>Страховка</div>
                     </div>
                     <div class="cost-amount">
                         {{ breakdown.insurance|floatformat:0 }} ₽
-                        <span class="percentage">({{ breakdown.insurance|divide:total_cost|percentage }})</span>
+                        <span class="percentage">({{ breakdown.insurance_percent }}%)</span>
                     </div>
                 </div>
                 
                 <div class="cost-item">
                     <div class="cost-label">
                         <div class="cost-icon">⛽</div>
-                        <div>Топливо ({{ mileage|floatformat:0 }} км/год)</div>
+                        <div>Топливо</div>
                     </div>
                     <div class="cost-amount">
                         {{ breakdown.fuel|floatformat:0 }} ₽
-                        <span class="percentage">({{ breakdown.fuel|divide:total_cost|percentage }})</span>
+                        <span class="percentage">({{ breakdown.fuel_percent }}%)</span>
                     </div>
                 </div>
                 
@@ -242,7 +468,7 @@
                     </div>
                     <div class="cost-amount">
                         {{ breakdown.maintenance|floatformat:0 }} ₽
-                        <span class="percentage">({{ breakdown.maintenance|divide:total_cost|percentage }})</span>
+                        <span class="percentage">({{ breakdown.maintenance_percent }}%)</span>
                     </div>
                 </div>
                 
@@ -253,32 +479,29 @@
                     </div>
                     <div class="cost-amount">
                         {{ breakdown.tax|floatformat:0 }} ₽
-                        <span class="percentage">({{ breakdown.tax|divide:total_cost|percentage }})</span>
+                        <span class="percentage">({{ breakdown.tax_percent }}%)</span>
                     </div>
                 </div>
             </div>
             
-            <!-- Кнопки действий -->
-            <div class="action-buttons">
-                <button class="btn btn-print" onclick="window.print()">
-                    <i class="bi bi-printer me-2"></i>Распечатать
-                </button>
-                <a href="{% url 'calculation_create' %}" class="btn btn-new">
-                    <i class="bi bi-calculator me-2"></i>Новый расчет
-                </a>
-                <a href="{% url 'home' %}" class="btn btn-outline-primary">
-                    <i class="bi bi-house me-2"></i>На главную
-                </a>
+            <div class="actions-section">
+                <div class="action-buttons">
+                    <button class="btn-print" onclick="window.print()">
+                        <i class="bi bi-printer me-2"></i>Распечатать
+                    </button>
+                    <a href="{% url 'calculation_create' %}" class="btn-new">
+                        <i class="bi bi-calculator me-2"></i>Новый расчет
+                    </a>
+                    <a href="{% url 'home' %}" class="btn-outline">
+                        <i class="bi bi-house me-2"></i>На главную
+                    </a>
+                </div>
             </div>
         </div>
         
         <div class="col-lg-4">
-            <!-- Информация об автомобиле -->
             <div class="car-info-card">
-                <h4 class="mb-3">🚗 {{ car.brand }} {{ car.model }}</h4>
-                {% if car.generation %}
-                <p class="text-muted mb-4">{{ car.generation }}</p>
-                {% endif %}
+                <h3 class="car-info-title"><i class="bi bi-car-front"></i>{{ car.brand }} {{ car.model }}</h3>
                 
                 <div class="info-grid">
                     <div class="info-item">
@@ -300,9 +523,8 @@
                 </div>
             </div>
             
-            <!-- Актуальные курсы -->
             <div class="currency-card">
-                <h5 class="mb-3">💱 Актуальные данные</h5>
+                <h3 class="currency-title"><i class="bi bi-cash-coin"></i>Актуальные данные</h3>
                 <div class="row">
                     <div class="col-6">
                         <div class="currency-label">Курс йены</div>
@@ -315,43 +537,37 @@
                         <div class="currency-label">₽/л в {{ region }}</div>
                     </div>
                 </div>
-                <div class="mt-3 pt-3 border-top border-white border-opacity-25">
-                    <small>
-                        <i class="bi bi-cash-coin me-1"></i>
+                <div class="mt-3 pt-3 border-top">
+                    <div class="currency-label">
+                        <i class="bi bi-currency-exchange me-1"></i>
                         {{ price_jpy|floatformat:0 }} ¥ = {{ price_rub|floatformat:0 }} ₽
-                    </small>
+                    </div>
                 </div>
             </div>
             
-            <!-- Советы по экономии -->
-            <div class="card mt-4">
-                <div class="card-body">
-                    <h5 class="card-title">💡 Как можно сэкономить?</h5>
-                    <ul class="mb-0">
-                        <li>Покупать авто у проверенных поставщиков</li>
-                        <li>Самостоятельно заниматься ТО</li>
-                        <li>Искать запчасти на разборах</li>
-                        <li>Выбирать регион с низкими тарифами</li>
-                        <li>Следить за курсом йены</li>
-                    </ul>
-                </div>
+            <div class="tips-card">
+                <h3 class="tips-title"><i class="bi bi-lightbulb"></i>Как можно сэкономить?</h3>
+                <ul class="tips-list">
+                    <li>Покупать авто у проверенных поставщиков</li>
+                    <li>Самостоятельно заниматься ТО</li>
+                    <li>Искать запчасти на разборах</li>
+                    <li>Выбирать регион с низкими тарифами</li>
+                    <li>Следить за курсом йены</li>
+                </ul>
             </div>
             
-            <!-- Сохранение результата -->
-            <div class="card mt-4">
-                <div class="card-body">
-                    <h5 class="card-title">💾 Сохранить результат</h5>
-                    <p class="card-text">Сохраните расчет для сравнения с другими моделями</p>
-                    {% if user.is_authenticated %}
-                    <button class="btn btn-outline-primary w-100">
-                        <i class="bi bi-save me-2"></i>Сохранить в профиль
-                    </button>
-                    {% else %}
-                    <a href="/admin/login/" class="btn btn-primary w-100">
-                        <i class="bi bi-box-arrow-in-right me-2"></i>Войти для сохранения
-                    </a>
-                    {% endif %}
-                </div>
+            <div class="save-card">
+                <h3 class="save-title"><i class="bi bi-save"></i>Сохранить результат</h3>
+                <p class="save-text">Сохраните расчет для сравнения с другими моделями</p>
+                {% if user.is_authenticated %}
+                <button class="btn-new w-100">
+                    <i class="bi bi-save me-2"></i>Сохранить в профиль
+                </button>
+                {% else %}
+                <a href="/admin/login/" class="btn-new w-100">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Войти для сохранения
+                </a>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -360,70 +576,45 @@
 
 {% block extra_js %}
 <script>
-// Альтернативный подход - используем data-атрибуты
-const calcData = {
-    custom: parseFloat('{{ breakdown.customs }}'),
-    adaptation: parseFloat('{{ breakdown.adaptation }}'),
-    insurance: parseFloat('{{ breakdown.insurance }}'),
-    fuel: parseFloat('{{ breakdown.fuel }}'),
-    maintenance: parseFloat('{{ breakdown.maintenance }}'),
-    tax: parseFloat('{{ breakdown.tax }}')
-};
-
 document.addEventListener('DOMContentLoaded', function() {
-    // Анимация появления результатов
-    const elements = document.querySelectorAll('.cost-item, .info-item, .total-cost-card, .currency-card');
-    elements.forEach((el, index) => {
+    const items = document.querySelectorAll('.cost-item');
+    items.forEach((el, index) => {
         el.style.opacity = '0';
-        el.style.transform = 'translateY(20px)';
+        el.style.transform = 'translateX(-20px)';
         setTimeout(() => {
             el.style.transition = 'opacity 0.5s, transform 0.5s';
             el.style.opacity = '1';
-            el.style.transform = 'translateY(0)';
+            el.style.transform = 'translateX(0)';
         }, index * 100);
     });
     
-    // Простые данные для демонстрации
-    const costs = {
-        'Таможня': calcData.custom || 0,
-        'Адаптация': calcData.adaptation || 0,
-        'Страховка': calcData.insurance || 0,
-        'Топливо': calcData.fuel || 0,
-        'ТО': calcData.maintenance || 0,
-        'Налог': calcData.tax || 0
-    };
-    
-    console.log('Детализация расходов:', costs);
-    
-    // Подготовка данных для возможного графика
-    const chartData = {
-        labels: Object.keys(costs),
-        datasets: [{
-            data: Object.values(costs),
-            backgroundColor: [
-                '#ff6b6b', '#4ecdc4', '#45b7d1', 
-                '#96ceb4', '#feca57', '#ff9ff3'
-            ]
-        }]
-    };
-    
-    // Просто логируем для демонстрации
-    console.log('Данные для графика:', chartData);
-    
-    // Обновляем проценты в реальном времени
-    function updatePercentages() {
-        document.querySelectorAll('.percentage').forEach(el => {
-            const text = el.textContent;
-            const match = text.match(/\(([\d.]+)%\)/);
-            if (match) {
-                const percent = parseFloat(match[1]);
-                el.style.color = percent > 30 ? '#dc3545' : 
-                                percent > 20 ? '#ffc107' : '#28a745';
+    document.querySelectorAll('.percentage').forEach(el => {
+        const text = el.textContent;
+        const match = text.match(/\(([\d.]+)%\)/);
+        if (match) {
+            const percent = parseFloat(match[1]);
+            if (percent > 30) {
+                el.style.color = '#ff3b30';
+                el.style.fontWeight = '700';
+            } else if (percent > 20) {
+                el.style.color = '#ff9500';
+                el.style.fontWeight = '600';
+            } else {
+                el.style.color = '#00a046';
+                el.style.fontWeight = '500';
             }
-        });
-    }
+        }
+    });
     
-    updatePercentages();
+    const totalAmount = document.querySelector('.total-amount');
+    if (totalAmount) {
+        const amount = parseFloat('{{ total_cost }}') || 0;
+        if (amount > 1000000) {
+            totalAmount.style.fontSize = '2.5rem';
+        } else if (amount > 500000) {
+            totalAmount.style.fontSize = '2.8rem';
+        }
+    }
 });
 </script>
 {% endblock %}

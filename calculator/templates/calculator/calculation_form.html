@@ -5,100 +5,95 @@
 {% block extra_css %}
 <style>
     .calculator-header {
-        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
         color: white;
-        padding: 60px 0;
-        border-radius: 0 0 30px 30px;
-        margin-bottom: 50px;
-    }
-    
-    .form-card {
-        background: white;
-        border-radius: 20px;
-        padding: 40px;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.1);
-        border: 1px solid #e0e0e0;
-    }
-    
-    .step-indicator {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 40px;
+        padding: 60px 0 40px;
+        margin-bottom: 30px;
+        border-radius: 0 0 8px 8px;
         position: relative;
+        overflow: hidden;
     }
     
-    .step-indicator::before {
+    .calculator-header::before {
         content: '';
         position: absolute;
-        top: 20px;
-        left: 10%;
-        right: 10%;
-        height: 3px;
-        background: #e0e0e0;
+        top: 0;
+        right: 0;
+        width: 50%;
+        height: 100%;
+        background: 
+            radial-gradient(circle at 70% 30%, rgba(255, 59, 48, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 30% 70%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+    }
+    
+    .calculator-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        line-height: 1.2;
+        position: relative;
         z-index: 1;
     }
     
-    .step {
-        text-align: center;
+    .calculator-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        max-width: 600px;
+        margin-bottom: 25px;
         position: relative;
-        z-index: 2;
+        z-index: 1;
     }
     
-    .step-number {
-        width: 40px;
-        height: 40px;
-        background: #e0e0e0;
-        color: #666;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        margin: 0 auto 10px;
-        transition: all 0.3s;
+    .form-container {
+        background: white;
+        border-radius: 12px;
+        padding: 40px;
+        box-shadow: 0 3px 20px rgba(0,0,0,0.08);
+        border: 1px solid #e8e8e8;
+        margin-bottom: 40px;
     }
     
-    .step.active .step-number {
-        background: #11998e;
-        color: white;
-        transform: scale(1.1);
+    .form-section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #ff3b30;
+        display: inline-block;
     }
     
-    .step-label {
-        font-size: 0.9rem;
-        color: #666;
-        font-weight: 500;
-    }
-    
-    .step.active .step-label {
-        color: #11998e;
-        font-weight: 600;
-    }
-    
-    .form-group-custom {
+    .form-group {
         margin-bottom: 25px;
     }
     
-    .form-label-custom {
+    .form-label {
         display: block;
-        margin-bottom: 8px;
+        margin-bottom: 10px;
         font-weight: 600;
         color: #333;
+        font-size: 1rem;
+    }
+    
+    .form-label i {
+        color: #ff3b30;
+        margin-right: 8px;
     }
     
     .form-control-custom {
         width: 100%;
         padding: 12px 16px;
         border: 2px solid #e0e0e0;
-        border-radius: 10px;
+        border-radius: 6px;
         font-size: 1rem;
         transition: all 0.3s;
+        background: white;
     }
     
     .form-control-custom:focus {
         outline: none;
-        border-color: #11998e;
-        box-shadow: 0 0 0 3px rgba(17, 153, 142, 0.1);
+        border-color: #ff3b30;
+        box-shadow: 0 0 0 3px rgba(255, 59, 48, 0.1);
     }
     
     .form-control-custom.select {
@@ -109,62 +104,154 @@
         padding-right: 40px;
     }
     
+    .input-group {
+        position: relative;
+    }
+    
+    .input-group-text {
+        background: #f8f9fa;
+        border: 2px solid #e0e0e0;
+        border-left: none;
+        border-radius: 0 6px 6px 0;
+        color: #666;
+        font-weight: 500;
+    }
+    
+    .input-group .form-control-custom {
+        border-right: none;
+        border-radius: 6px 0 0 6px;
+    }
+    
     .calculate-btn {
-        background: linear-gradient(45deg, #11998e, #38ef7d);
+        background: #ff3b30;
         border: none;
         color: white;
-        padding: 16px 40px;
+        padding: 15px 40px;
         font-size: 1.1rem;
         font-weight: 600;
-        border-radius: 25px;
-        cursor: pointer;
+        border-radius: 6px;
         transition: all 0.3s;
         width: 100%;
-        margin-top: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 10px;
     }
     
     .calculate-btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 25px rgba(17, 153, 142, 0.3);
+        background: #e0352a;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 59, 48, 0.2);
     }
     
-    .info-box {
+    .calculate-btn i {
+        margin-right: 10px;
+    }
+    
+    .info-card {
         background: #f8f9fa;
-        border-left: 4px solid #11998e;
-        padding: 20px;
         border-radius: 10px;
+        padding: 25px;
+        border: 1px solid #e8e8e8;
         margin-top: 30px;
     }
     
     .info-title {
-        color: #11998e;
-        font-weight: 600;
-        margin-bottom: 10px;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .info-title i {
+        color: #ff3b30;
+        margin-right: 10px;
+    }
+    
+    .info-list {
+        margin: 0;
+        padding-left: 20px;
+        color: #555;
+    }
+    
+    .info-list li {
+        margin-bottom: 8px;
+        line-height: 1.5;
     }
     
     .error-list {
-        color: #dc3545;
-        font-size: 0.875rem;
-        margin-top: 5px;
+        color: #ff3b30;
+        font-size: 0.9rem;
+        margin-top: 8px;
         padding-left: 0;
         list-style: none;
     }
     
     .error-list li {
-        background: #f8d7da;
-        border: 1px solid #f5c6cb;
-        border-radius: 5px;
+        background: #fff5f5;
+        border: 1px solid #ffcccc;
+        border-radius: 4px;
         padding: 8px 12px;
         margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .error-list li::before {
+        content: "⚠️";
+        margin-right: 8px;
     }
     
     .field-error {
-        border-color: #dc3545 !important;
+        border-color: #ff3b30 !important;
     }
     
     .field-error:focus {
-        border-color: #dc3545 !important;
-        box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1) !important;
+        border-color: #ff3b30 !important;
+        box-shadow: 0 0 0 3px rgba(255, 59, 48, 0.1) !important;
+    }
+    
+    .help-text {
+        font-size: 0.875rem;
+        color: #666;
+        margin-top: 6px;
+        display: block;
+    }
+    
+    .example-card {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        border: 1px solid #e8e8e8;
+        margin-top: 30px;
+    }
+    
+    .example-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 15px;
+    }
+    
+    @media (max-width: 768px) {
+        .calculator-header {
+            padding: 40px 0 30px;
+        }
+        
+        .calculator-title {
+            font-size: 1.8rem;
+        }
+        
+        .form-container {
+            padding: 25px;
+        }
+        
+        .calculate-btn {
+            padding: 14px 20px;
+        }
     }
 </style>
 {% endblock %}
@@ -172,44 +259,47 @@
 {% block content %}
 <div class="calculator-header">
     <div class="container">
-        <h1 class="display-4 fw-bold mb-3">🧮 Калькулятор стоимости владения</h1>
-        <p class="lead mb-0">Рассчитайте полные расходы на покупку и содержание праворульного автомобиля в России</p>
+        <h1 class="calculator-title">🧮 Калькулятор стоимости владения</h1>
+        <p class="calculator-subtitle">Рассчитайте полные расходы на покупку и содержание праворульного автомобиля в России</p>
+        
+        <div class="d-flex gap-3 flex-wrap mt-4">
+            <div class="text-center">
+                <div class="text-white opacity-75 mb-1">Шаг 1</div>
+                <div class="text-white fw-bold">Выбор авто</div>
+            </div>
+            <div class="text-center">
+                <div class="text-white opacity-75 mb-1">Шаг 2</div>
+                <div class="text-white fw-bold">Параметры</div>
+            </div>
+            <div class="text-center">
+                <div class="text-white opacity-75 mb-1">Шаг 3</div>
+                <div class="text-white fw-bold">Расчет</div>
+            </div>
+        </div>
     </div>
 </div>
 
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="form-card">
-                <div class="step-indicator">
-                    <div class="step active">
-                        <div class="step-number">1</div>
-                        <div class="step-label">Выбор авто</div>
-                    </div>
-                    <div class="step">
-                        <div class="step-number">2</div>
-                        <div class="step-label">Параметры</div>
-                    </div>
-                    <div class="step">
-                        <div class="step-number">3</div>
-                        <div class="step-label">Расчет</div>
-                    </div>
-                </div>
+        <div class="col-lg-9">
+            <div class="form-container">
+                <h2 class="form-section-title">Заполните данные для расчета</h2>
                 
                 <form method="post" novalidate>
                     {% csrf_token %}
                     
                     {% if form.non_field_errors %}
                     <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
                         {% for error in form.non_field_errors %}
                             {{ error }}
                         {% endfor %}
                     </div>
                     {% endif %}
                     
-                    <div class="form-group-custom">
-                        <label class="form-label-custom">
-                            <i class="bi bi-car-front me-2"></i>{{ form.car.label }}
+                    <div class="form-group">
+                        <label class="form-label" for="id_car">
+                            <i class="bi bi-car-front"></i>{{ form.car.label }}
                         </label>
                         {{ form.car }}
                         {% if form.car.errors %}
@@ -219,11 +309,12 @@
                             {% endfor %}
                         </ul>
                         {% endif %}
+                        <small class="help-text">Выберите модель из каталога или введите параметры вручную</small>
                     </div>
                     
-                    <div class="form-group-custom">
-                        <label class="form-label-custom">
-                            <i class="bi bi-currency-yen me-2"></i>{{ form.purchase_price_jpy.label }}
+                    <div class="form-group">
+                        <label class="form-label" for="id_purchase_price_jpy">
+                            <i class="bi bi-currency-yen"></i>{{ form.purchase_price_jpy.label }}
                         </label>
                         <div class="input-group">
                             {{ form.purchase_price_jpy }}
@@ -236,12 +327,13 @@
                             {% endfor %}
                         </ul>
                         {% endif %}
-                        <small class="text-muted">{{ form.purchase_price_jpy.help_text }}</small>
+                        <small class="help-text">{{ form.purchase_price_jpy.help_text }}</small>
+                        <div id="priceHint" class="help-text"></div>
                     </div>
                     
-                    <div class="form-group-custom">
-                        <label class="form-label-custom">
-                            <i class="bi bi-speedometer2 me-2"></i>{{ form.annual_mileage.label }}
+                    <div class="form-group">
+                        <label class="form-label" for="id_annual_mileage">
+                            <i class="bi bi-speedometer2"></i>{{ form.annual_mileage.label }}
                         </label>
                         <div class="input-group">
                             {{ form.annual_mileage }}
@@ -254,12 +346,12 @@
                             {% endfor %}
                         </ul>
                         {% endif %}
-                        <small class="text-muted">{{ form.annual_mileage.help_text }}</small>
+                        <small class="help-text">{{ form.annual_mileage.help_text }}</small>
                     </div>
                     
-                    <div class="form-group-custom">
-                        <label class="form-label-custom">
-                            <i class="bi bi-calendar-range me-2"></i>{{ form.ownership_years.label }}
+                    <div class="form-group">
+                        <label class="form-label" for="id_ownership_years">
+                            <i class="bi bi-calendar-range"></i>{{ form.ownership_years.label }}
                         </label>
                         {{ form.ownership_years }}
                         {% if form.ownership_years.errors %}
@@ -269,11 +361,12 @@
                             {% endfor %}
                         </ul>
                         {% endif %}
+                        <small class="help-text">Рекомендуемый срок 3-5 лет</small>
                     </div>
                     
-                    <div class="form-group-custom">
-                        <label class="form-label-custom">
-                            <i class="bi bi-geo-alt me-2"></i>{{ form.region.label }}
+                    <div class="form-group">
+                        <label class="form-label" for="id_region">
+                            <i class="bi bi-geo-alt"></i>{{ form.region.label }}
                         </label>
                         {{ form.region }}
                         {% if form.region.errors %}
@@ -283,37 +376,86 @@
                             {% endfor %}
                         </ul>
                         {% endif %}
-                        <small class="text-muted">Влияет на стоимость страховки и ТО</small>
+                        <small class="help-text">Влияет на стоимость страховки и технического обслуживания</small>
                     </div>
                     
                     <button type="submit" class="calculate-btn">
-                        <i class="bi bi-calculator me-2"></i>Рассчитать полную стоимость
+                        <i class="bi bi-calculator"></i>Рассчитать полную стоимость
                     </button>
                 </form>
                 
-                <div class="info-box">
-                    <div class="info-title">
-                        <i class="bi bi-info-circle me-2"></i>Что учитывается в расчете?
-                    </div>
-                    <ul class="mb-0">
-                        <li>Таможенные пошлины и утильсбор</li>
-                        <li>Адаптация под российские условия (печка, антикор)</li>
-                        <li>Страховка ОСАГО/КАСКО</li>
-                        <li>Техническое обслуживание и ремонты</li>
-                        <li>Топливо по средним ценам</li>
-                        <li>Транспортный налог</li>
+                <div class="info-card">
+                    <h3 class="info-title">
+                        <i class="bi bi-info-circle"></i>Что учитывается в расчете?
+                    </h3>
+                    <ul class="info-list">
+                        <li><strong>Таможенные платежи:</strong> пошлина, НДС, утильсбор</li>
+                        <li><strong>Адаптация:</strong> печка, антикоррозийная обработка, замена стекол</li>
+                        <li><strong>Страховка:</strong> ОСАГО и КАСКО на весь срок владения</li>
+                        <li><strong>ТО и ремонты:</strong> плановое обслуживание и вероятные поломки</li>
+                        <li><strong>Топливо:</strong> расход по средним региональным ценам</li>
+                        <li><strong>Налоги:</strong> транспортный налог по ставке региона</li>
+                        <li><strong>Прочее:</strong> доставка, растаможка, постановка на учет</li>
                     </ul>
                 </div>
             </div>
             
-            <div class="card mt-4">
-                <div class="card-body">
-                    <h5 class="card-title">Пример расчета:</h5>
-                    <p class="card-text">
-                        <strong>Toyota Mark II (500,000 ¥)</strong> на 3 года в Москве с пробегом 15,000 км/год
-                        обойдется примерно в <strong>450,000 - 550,000 рублей</strong> сверх стоимости автомобиля.
-                    </p>
-                    <a href="#" class="btn btn-outline-primary">Подробнее о методике расчета</a>
+            <div class="example-card">
+                <h3 class="example-title">
+                    <i class="bi bi-lightbulb text-warning me-2"></i>Пример расчета
+                </h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <div class="text-muted small">Автомобиль</div>
+                            <div class="fw-bold">Toyota Mark II (JZX100)</div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="text-muted small">Цена в Японии</div>
+                            <div class="fw-bold">500,000 ¥</div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="text-muted small">Срок владения</div>
+                            <div class="fw-bold">3 года</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <div class="text-muted small">Пробег в год</div>
+                            <div class="fw-bold">15,000 км</div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="text-muted small">Регион</div>
+                            <div class="fw-bold">Москва</div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="text-muted small">Итоговая стоимость</div>
+                            <div class="fw-bold text-danger">≈ 450,000 - 550,000 ₽</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <small class="text-muted">
+                        *Дополнительные расходы сверх стоимости автомобиля. Точный расчет зависит от актуальных курсов валют и законодательства.
+                    </small>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-md-4 mb-3">
+                    <a href="{% url 'car_list' %}" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-list-ul me-2"></i>Смотреть каталог авто
+                    </a>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <a href="{% url 'my_calculations' %}" class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-folder me-2"></i>Мои расчеты
+                    </a>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <a href="{% url 'home' %}" class="btn btn-outline-dark w-100">
+                        <i class="bi bi-house me-2"></i>На главную
+                    </a>
                 </div>
             </div>
         </div>
@@ -328,51 +470,64 @@ document.addEventListener('DOMContentLoaded', function() {
     inputs.forEach(input => {
         if (input.tagName === 'SELECT') {
             input.classList.add('form-control-custom', 'select');
-        } else if (input.type !== 'hidden') {
+        } else if (input.type !== 'hidden' && !input.classList.contains('btn')) {
             input.classList.add('form-control-custom');
         }
     });
     
-    const steps = document.querySelectorAll('.step');
-    const carSelect = document.querySelector('#id_car');
-    
-    if (carSelect) {
-        carSelect.addEventListener('change', function() {
-            if (this.value) {
-                steps[1].classList.add('active');
-            } else {
-                steps[1].classList.remove('active');
-            }
-        });
-    }
-    
     const priceInput = document.querySelector('#id_purchase_price_jpy');
-    if (priceInput) {
-        priceInput.addEventListener('input', function() {
-            const price = parseInt(this.value) || 0;
+    const priceHint = document.getElementById('priceHint');
+    
+    if (priceInput && priceHint) {
+        function updatePriceHint() {
+            const price = parseInt(priceInput.value.replace(/\s/g, '')) || 0;
             const rub = Math.round(price * 0.6);
-            let hint = document.getElementById('priceHint');
             
-            if (!hint) {
-                hint = document.createElement('div');
-                hint.id = 'priceHint';
-                hint.className = 'form-text text-muted mt-1';
-                this.parentElement.parentElement.appendChild(hint);
+            if (price > 0) {
+                priceHint.innerHTML = `≈ ${rub.toLocaleString('ru-RU')} ₽ по текущему курсу (1 ¥ = 0.6 ₽)`;
+                priceHint.style.color = '#ff3b30';
+                priceHint.style.fontWeight = '600';
+            } else {
+                priceHint.innerHTML = 'Введите стоимость автомобиля в японских йенах';
+                priceHint.style.color = '#666';
+                priceHint.style.fontWeight = 'normal';
             }
-            
-            hint.innerHTML = `≈ ${rub.toLocaleString('ru-RU')} рублей по текущему курсу`;
-        });
+        }
         
-        priceInput.dispatchEvent(new Event('input'));
+        priceInput.addEventListener('input', updatePriceHint);
+        priceInput.addEventListener('change', updatePriceHint);
+        
+        updatePriceHint();
     }
     
     const errorFields = document.querySelectorAll('.error-list');
     errorFields.forEach(errorList => {
         const field = errorList.previousElementSibling;
-        if (field && (field.tagName === 'INPUT' || field.tagName === 'SELECT' || field.tagName === 'TEXTAREA')) {
+        if (field && field.classList.contains('form-control-custom')) {
             field.classList.add('field-error');
+        } else if (field && field.querySelector('.form-control-custom')) {
+            field.querySelector('.form-control-custom').classList.add('field-error');
         }
     });
+    
+    if (priceInput) {
+        priceInput.addEventListener('input', function(e) {
+            let value = this.value.replace(/\D/g, '');
+            value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+            this.value = value;
+        });
+    }
+    
+    const regionSelect = document.querySelector('#id_region');
+    if (regionSelect) {
+        regionSelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const hint = selectedOption.getAttribute('data-hint');
+            if (hint) {
+                console.log('Региональные особенности:', hint);
+            }
+        });
+    }
 });
 </script>
 {% endblock %}

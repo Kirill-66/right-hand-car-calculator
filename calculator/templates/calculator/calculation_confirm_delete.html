@@ -2,75 +2,242 @@
 
 {% block title %}Удаление расчета - JDM Calculator{% endblock %}
 
+{% block extra_css %}
+<style>
+    .delete-header {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+        color: white;
+        padding: 60px 0 40px;
+        margin-bottom: 30px;
+        border-radius: 0 0 8px 8px;
+        text-align: center;
+    }
+    
+    .delete-icon {
+        font-size: 4rem;
+        color: #ff3b30;
+        margin-bottom: 20px;
+    }
+    
+    .delete-card {
+        background: white;
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        border: 1px solid #e8e8e8;
+        margin-bottom: 30px;
+    }
+    
+    .car-info {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+        border-left: 4px solid #ff3b30;
+    }
+    
+    .car-icon {
+        font-size: 2.5rem;
+        color: #1a1a1a;
+        margin-right: 15px;
+    }
+    
+    .warning-text {
+        color: #ff3b30;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+    
+    .btn-delete {
+        background: #ff3b30;
+        border: none;
+        color: white;
+        padding: 12px 30px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 4px;
+        transition: all 0.3s;
+        width: 100%;
+        max-width: 200px;
+    }
+    
+    .btn-delete:hover {
+        background: #e0352a;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 59, 48, 0.2);
+    }
+    
+    .btn-cancel {
+        background: #f8f9fa;
+        border: 2px solid #e0e0e0;
+        color: #666;
+        padding: 12px 30px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 4px;
+        transition: all 0.3s;
+        width: 100%;
+        max-width: 200px;
+    }
+    
+    .btn-cancel:hover {
+        background: #e9ecef;
+        border-color: #1a1a1a;
+        color: #1a1a1a;
+    }
+    
+    @media (max-width: 768px) {
+        .delete-header {
+            padding: 40px 0 30px;
+        }
+        
+        .delete-icon {
+            font-size: 3rem;
+        }
+        
+        .btn-delete, .btn-cancel {
+            max-width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card border-danger">
-                <div class="card-header bg-danger text-white">
-                    <h4 class="mb-0">
-                        <i class="bi bi-exclamation-triangle me-2"></i>
-                        Подтверждение удаления
-                    </h4>
+<div class="delete-header">
+    <div class="container">
+        <div class="delete-icon">
+            <i class="bi bi-trash-fill"></i>
+        </div>
+        <h1 class="banner-title mb-3">Удаление расчета</h1>
+        <p class="banner-subtitle">Подтвердите удаление расчета стоимости автомобиля</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="delete-card">
+        <div class="text-center mb-4">
+            <h2 class="section-title mb-3">Вы уверены, что хотите удалить этот расчет?</h2>
+            <p class="text-muted">Это действие нельзя отменить. Все данные расчета будут удалены безвозвратно.</p>
+        </div>
+        
+        <div class="car-info">
+            <div class="d-flex align-items-center">
+                <div class="car-icon">
+                    <i class="bi bi-car-front-fill"></i>
                 </div>
-                <div class="card-body text-center">
-                    <div class="mb-4">
-                        <div class="display-1 text-danger mb-3">
-                            <i class="bi bi-trash"></i>
+                <div>
+                    <h4 class="mb-2">{{ calculation.car.brand_display }} {{ calculation.car.model }}</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-1">
+                                <i class="bi bi-calendar me-1"></i>
+                                <strong>Дата создания:</strong> {{ calculation.created_at|date:"d.m.Y H:i" }}
+                            </p>
+                            <p class="mb-1">
+                                <i class="bi bi-cash-coin me-1"></i>
+                                <strong>Цена в Японии:</strong> {{ calculation.purchase_price_jpy|floatformat:0 }} ¥
+                            </p>
                         </div>
-                        <h4>Вы уверены, что хотите удалить этот расчет?</h4>
-                    </div>
-                    
-                    <div class="alert alert-info mb-4">
-                        <div class="d-flex">
-                            <div class="me-3">
-                                <i class="bi bi-car-front fs-3"></i>
-                            </div>
-                            <div>
-                                <h5 class="alert-heading">{{ calculation.car.brand_display }} {{ calculation.car.model }}</h5>
-                                <p class="mb-1">
-                                    <strong>Дата создания:</strong> {{ calculation.created_at|date:"d.m.Y H:i" }}
-                                </p>
-                                <p class="mb-1">
-                                    <strong>Стоимость:</strong> 
-                                    {% if calculation.total_cost %}
-                                        {{ calculation.total_cost|floatformat:0 }} ₽
-                                    {% else %}
-                                        Не рассчитано
-                                    {% endif %}
-                                </p>
-                                <p class="mb-0">
-                                    <strong>Срок владения:</strong> {{ calculation.ownership_years }} года
-                                </p>
-                            </div>
+                        <div class="col-md-6">
+                            <p class="mb-1">
+                                <i class="bi bi-clock me-1"></i>
+                                <strong>Срок владения:</strong> {{ calculation.ownership_years }} года
+                            </p>
+                            <p class="mb-0">
+                                <i class="bi bi-graph-up me-1"></i>
+                                <strong>Итоговая стоимость:</strong> 
+                                {% if calculation.total_cost %}
+                                    <span class="text-danger fw-bold">{{ calculation.total_cost|floatformat:0 }} ₽</span>
+                                {% else %}
+                                    <span class="text-muted">Не рассчитано</span>
+                                {% endif %}
+                            </p>
                         </div>
                     </div>
-                    
-                    <p class="text-muted mb-4">
-                        <i class="bi bi-info-circle me-1"></i>
-                        Это действие нельзя отменить. Все данные расчета будут удалены безвозвратно.
-                    </p>
-                    
-                    <form method="post">
-                        {% csrf_token %}
-                        <div class="d-flex justify-content-center gap-3">
-                            <button type="submit" class="btn btn-danger btn-lg">
-                                <i class="bi bi-trash me-2"></i>Да, удалить
-                            </button>
-                            <a href="{% url 'my_calculations' %}" class="btn btn-outline-secondary btn-lg">
-                                <i class="bi bi-x-circle me-2"></i>Отмена
-                            </a>
-                        </div>
-                    </form>
                 </div>
             </div>
-            
-            <div class="text-center mt-4">
-                <a href="{% url 'calculation_result' calculation.id %}" class="text-decoration-none">
-                    <i class="bi bi-arrow-left me-1"></i>Вернуться к просмотру расчета
+        </div>
+        
+        <div class="alert alert-warning mt-4">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-exclamation-triangle-fill fs-3 me-3"></i>
+                <div>
+                    <h5 class="alert-heading mb-2">Внимание!</h5>
+                    <p class="mb-0">
+                        После удаления восстановить данные будет невозможно. 
+                        Если вы хотите сохранить информацию, рекомендуем сделать скриншот 
+                        или экспортировать данные перед удалением.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <form method="post">
+            {% csrf_token %}
+            <div class="d-flex justify-content-center gap-4 mt-5">
+                <button type="submit" class="btn-delete">
+                    <i class="bi bi-trash me-2"></i>Да, удалить
+                </button>
+                <a href="{% url 'my_calculations' %}" class="btn-cancel">
+                    <i class="bi bi-x-circle me-2"></i>Отмена
                 </a>
+            </div>
+        </form>
+    </div>
+    
+    <div class="text-center mt-4">
+        <p class="text-muted mb-3">Или вы можете:</p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a href="{% url 'calculation_result' calculation.id %}" class="btn btn-outline-primary">
+                <i class="bi bi-eye me-2"></i>Посмотреть расчет
+            </a>
+            <a href="{% url 'my_calculations' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Вернуться к моим расчетам
+            </a>
+            <a href="{% url 'home' %}" class="btn btn-outline-dark">
+                <i class="bi bi-house me-2"></i>На главную
+            </a>
+        </div>
+    </div>
+    
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="bi bi-shield-exclamation fs-1 text-muted mb-3"></i>
+                    <h5 class="card-title">Безопасность данных</h5>
+                    <p class="card-text text-muted">
+                        Мы не храним удаленные расчеты более 30 дней. 
+                        Все данные окончательно удаляются из наших систем.
+                    </p>
+                </div>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const deleteForm = document.querySelector('form[method="post"]');
+        if (deleteForm) {
+            deleteForm.addEventListener('submit', function(e) {
+                if (!confirm('Вы точно хотите удалить этот расчет? Это действие нельзя отменить.')) {
+                    e.preventDefault();
+                }
+            });
+        }
+        
+        const deleteIcon = document.querySelector('.delete-icon');
+        if (deleteIcon) {
+            setInterval(() => {
+                deleteIcon.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    deleteIcon.style.transform = 'scale(1)';
+                }, 300);
+            }, 2000);
+        }
+    });
+</script>
 {% endblock %}

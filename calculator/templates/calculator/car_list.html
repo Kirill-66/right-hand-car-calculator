@@ -5,73 +5,159 @@
 {% block extra_css %}
 <style>
     .catalog-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
         color: white;
-        padding: 60px 0;
-        border-radius: 0 0 30px 30px;
-        margin-bottom: 40px;
-    }
-    
-    .car-card {
-        background: white;
-        border-radius: 15px;
-        overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        transition: all 0.3s;
-        height: 100%;
-        border: 1px solid #e0e0e0;
-    }
-    
-    .car-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-    }
-    
-    .car-image {
-        height: 200px;
-        background: linear-gradient(45deg, #f5f7fa, #c3cfe2);
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        padding: 60px 0 40px;
+        margin-bottom: 30px;
+        border-radius: 0 0 8px 8px;
         position: relative;
         overflow: hidden;
     }
     
-    .car-image .placeholder {
-        font-size: 4rem;
-        color: rgba(102, 126, 234, 0.2);
+    .catalog-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 50%;
+        height: 100%;
+        background: 
+            radial-gradient(circle at 70% 30%, rgba(255, 59, 48, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 30% 70%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+    }
+    
+    .catalog-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        line-height: 1.2;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .catalog-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        max-width: 600px;
+        margin-bottom: 25px;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .filter-card {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        border: 1px solid #e8e8e8;
+        margin-bottom: 40px;
+    }
+    
+    .filter-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .filter-title i {
+        color: #ff3b30;
+        margin-right: 10px;
+    }
+    
+    .filter-btn {
+        background: #1a1a1a;
+        border: none;
+        color: white;
+        padding: 12px 25px;
+        font-weight: 600;
+        border-radius: 4px;
+        transition: all 0.3s;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .filter-btn:hover {
+        background: #ff3b30;
+        transform: translateY(-2px);
+    }
+    
+    .car-card {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        border: 1px solid #e8e8e8;
+        transition: all 0.3s;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .car-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+        border-color: #ff3b30;
+    }
+    
+    .car-image {
+        height: 180px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 3.5rem;
+    }
+    
+    .car-content {
+        padding: 20px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
     }
     
     .car-brand {
-        font-weight: 700;
-        color: #333;
-        font-size: 1.2rem;
+        font-size: 0.9rem;
+        color: #666;
+        font-weight: 600;
+        margin-bottom: 5px;
+        text-transform: uppercase;
     }
     
     .car-model {
-        font-weight: 600;
-        color: #667eea;
-        font-size: 1.5rem;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 15px;
+        line-height: 1.3;
     }
     
-    .car-details {
-        padding: 20px;
+    .car-specs {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+        line-height: 1.5;
+        flex-grow: 1;
     }
     
-    .car-spec {
+    .car-spec-item {
         display: flex;
         justify-content: space-between;
-        padding: 8px 0;
+        padding: 6px 0;
         border-bottom: 1px solid #f0f0f0;
     }
     
-    .car-spec:last-child {
+    .car-spec-item:last-child {
         border-bottom: none;
     }
     
     .spec-label {
         color: #666;
-        font-weight: 500;
     }
     
     .spec-value {
@@ -79,68 +165,117 @@
         font-weight: 600;
     }
     
-    .calculate-btn {
-        background: linear-gradient(45deg, #667eea, #764ba2);
+    .car-btn {
+        background: #1a1a1a;
         border: none;
         color: white;
-        padding: 12px 25px;
-        border-radius: 25px;
+        padding: 12px 20px;
+        border-radius: 4px;
         font-weight: 600;
         transition: all 0.3s;
         text-decoration: none;
-        display: inline-block;
-        margin-top: 15px;
+        display: block;
+        text-align: center;
+        margin-top: auto;
     }
     
-    .calculate-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    .car-btn:hover {
+        background: #ff3b30;
         color: white;
+        text-decoration: none;
     }
     
-    .filter-section {
-        background: white;
-        padding: 25px;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        margin-bottom: 30px;
+    .pagination-container {
+        margin-top: 50px;
     }
     
-    .pagination {
-        margin-top: 40px;
+    .page-item.active .page-link {
+        background-color: #ff3b30;
+        border-color: #ff3b30;
+    }
+    
+    .page-link {
+        color: #1a1a1a;
+        border: 1px solid #e8e8e8;
+        padding: 10px 18px;
+        margin: 0 4px;
+        border-radius: 4px;
+        transition: all 0.3s;
+    }
+    
+    .page-link:hover {
+        background-color: #f8f9fa;
+        border-color: #ff3b30;
+        color: #ff3b30;
     }
     
     .empty-state {
+        background: white;
+        border-radius: 10px;
+        padding: 60px 30px;
         text-align: center;
-        padding: 60px 20px;
-        background: #f8f9fa;
-        border-radius: 15px;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        border: 1px solid #e8e8e8;
+        margin-top: 40px;
     }
     
     .empty-state-icon {
         font-size: 4rem;
-        color: #667eea;
+        color: #ff3b30;
         margin-bottom: 20px;
+    }
+    
+    .empty-state-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 15px;
+    }
+    
+    .empty-state-text {
+        color: #666;
+        margin-bottom: 30px;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    @media (max-width: 768px) {
+        .catalog-header {
+            padding: 40px 0 30px;
+        }
+        
+        .catalog-title {
+            font-size: 1.8rem;
+        }
+        
+        .filter-card {
+            padding: 20px;
+        }
+        
+        .car-image {
+            height: 150px;
+            font-size: 3rem;
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- Шапка каталога -->
 <div class="catalog-header">
     <div class="container">
-        <h1 class="display-5 fw-bold mb-3">🚗 Каталог праворульных автомобилей</h1>
-        <p class="lead mb-0">Выберите автомобиль для расчета стоимости владения</p>
+        <h1 class="catalog-title">🚗 Каталог праворульных автомобилей</h1>
+        <p class="catalog-subtitle">Выберите автомобиль для расчета стоимости владения</p>
     </div>
 </div>
 
 <div class="container">
-    <!-- Фильтры -->
-    <div class="filter-section">
+    <div class="filter-card">
+        <h2 class="filter-title"><i class="bi bi-funnel"></i>Фильтры поиска</h2>
         <form method="get" class="row g-3">
-            <div class="col-md-3">
-                <label class="form-label">Марка</label>
-                <select name="brand" class="form-select">
+            <div class="col-lg-3 col-md-6">
+                <label class="form-label fw-600">Марка автомобиля</label>
+                <select name="brand" class="form-control">
                     <option value="">Все марки</option>
                     <option value="toyota">Toyota</option>
                     <option value="nissan">Nissan</option>
@@ -149,59 +284,64 @@
                     <option value="honda">Honda</option>
                 </select>
             </div>
-            <div class="col-md-3">
-                <label class="form-label">Тип топлива</label>
-                <select name="fuel_type" class="form-select">
-                    <option value="">Все</option>
+            <div class="col-lg-3 col-md-6">
+                <label class="form-label fw-600">Тип топлива</label>
+                <select name="fuel_type" class="form-control">
+                    <option value="">Все типы</option>
                     <option value="petrol">Бензин</option>
                     <option value="diesel">Дизель</option>
                 </select>
             </div>
-            <div class="col-md-3">
-                <label class="form-label">Год выпуска от</label>
+            <div class="col-lg-3 col-md-6">
+                <label class="form-label fw-600">Год выпуска от</label>
                 <input type="number" name="year_from" class="form-control" placeholder="2000" min="1990" max="2024">
             </div>
-            <div class="col-md-3 d-flex align-items-end">
-                <button type="submit" class="btn btn-primary w-100">
-                    <i class="bi bi-funnel me-2"></i>Фильтровать
+            <div class="col-lg-3 col-md-6 d-flex align-items-end">
+                <button type="submit" class="filter-btn">
+                    <i class="bi bi-search me-2"></i>Найти авто
                 </button>
             </div>
         </form>
     </div>
 
-    <!-- Список автомобилей -->
-    {% if cars %}
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-        {% for car in cars %}
-        <div class="col">
+    {% if page_obj %}
+    <div class="row g-4">
+        {% for car in page_obj %}
+        <div class="col-xl-3 col-lg-4 col-md-6">
             <div class="car-card">
                 <div class="car-image">
-                    <div class="placeholder">
-                        <i class="bi bi-car-front"></i>
-                    </div>
+                    <i class="bi bi-car-front"></i>
                 </div>
-                <div class="car-details">
+                <div class="car-content">
                     <div class="car-brand">{{ car.get_brand_display }}</div>
-                    <div class="car-model mb-3">{{ car.model }}</div>
+                    <h4 class="car-model">{{ car.model }}</h4>
                     
-                    <div class="car-spec">
-                        <span class="spec-label">Годы выпуска:</span>
-                        <span class="spec-value">{{ car.year_from }} - {{ car.year_to }}</span>
-                    </div>
-                    <div class="car-spec">
-                        <span class="spec-label">Объем двигателя:</span>
-                        <span class="spec-value">{{ car.engine_volume }} л</span>
-                    </div>
-                    <div class="car-spec">
-                        <span class="spec-label">Топливо:</span>
-                        <span class="spec-value">{{ car.get_fuel_type_display }}</span>
-                    </div>
-                    <div class="car-spec">
-                        <span class="spec-label">Расход:</span>
-                        <span class="spec-value">{{ car.fuel_consumption }} л/100км</span>
+                    <div class="car-specs">
+                        <div class="car-spec-item">
+                            <span class="spec-label">Годы выпуска:</span>
+                            <span class="spec-value">{{ car.year_from }} - {{ car.year_to }}</span>
+                        </div>
+                        <div class="car-spec-item">
+                            <span class="spec-label">Объем двигателя:</span>
+                            <span class="spec-value">{{ car.engine_volume }} л</span>
+                        </div>
+                        <div class="car-spec-item">
+                            <span class="spec-label">Тип топлива:</span>
+                            <span class="spec-value">{{ car.get_fuel_type_display }}</span>
+                        </div>
+                        <div class="car-spec-item">
+                            <span class="spec-label">Расход топлива:</span>
+                            <span class="spec-value">{{ car.fuel_consumption }} л/100км</span>
+                        </div>
+                        {% if car.average_price_jpy %}
+                        <div class="car-spec-item">
+                            <span class="spec-label">Средняя цена:</span>
+                            <span class="spec-value text-danger fw-bold">{{ car.average_price_jpy|floatformat:0 }} ¥</span>
+                        </div>
+                        {% endif %}
                     </div>
                     
-                    <a href="{% url 'calculation_create' %}?car={{ car.id }}" class="calculate-btn w-100 text-center">
+                    <a href="{% url 'calculation_create' %}?car={{ car.id }}" class="car-btn">
                         <i class="bi bi-calculator me-2"></i>Рассчитать стоимость
                     </a>
                 </div>
@@ -210,53 +350,61 @@
         {% endfor %}
     </div>
 
-    <!-- Пагинация -->
     {% if page_obj.has_other_pages %}
-    <nav class="pagination justify-content-center">
-        <ul class="pagination">
-            {% if page_obj.has_previous %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
-                    <i class="bi bi-chevron-left"></i>
-                </a>
-            </li>
-            {% endif %}
-            
-            {% for i in page_obj.paginator.page_range %}
-                {% if page_obj.number == i %}
-                <li class="page-item active"><span class="page-link">{{ i }}</span></li>
-                {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
+    <div class="pagination-container">
+        <nav aria-label="Навигация по страницам">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ i }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
                 </li>
                 {% endif %}
-            {% endfor %}
-            
-            {% if page_obj.has_next %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
-                    <i class="bi bi-chevron-right"></i>
-                </a>
-            </li>
-            {% endif %}
-        </ul>
-    </nav>
+                
+                {% for i in page_obj.paginator.page_range %}
+                    {% if page_obj.number == i %}
+                    <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                    {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ i }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        
+        <div class="text-center mt-3 text-muted">
+            Показано {{ page_obj.start_index }} - {{ page_obj.end_index }} из {{ page_obj.paginator.count }} автомобилей
+        </div>
+    </div>
     {% endif %}
 
     {% else %}
-    <!-- Состояние пустого списка -->
     <div class="empty-state">
         <div class="empty-state-icon">
             <i class="bi bi-car-front"></i>
         </div>
-        <h3 class="mb-3">Автомобили не найдены</h3>
-        <p class="text-muted mb-4">Попробуйте изменить параметры фильтрации или добавьте автомобили через админ-панель.</p>
-        <a href="/admin/calculator/righthandcar/add/" class="btn btn-primary me-2">
-            <i class="bi bi-plus-circle me-2"></i>Добавить автомобиль
-        </a>
-        <a href="{% url 'home' %}" class="btn btn-outline-primary">
-            <i class="bi bi-house me-2"></i>На главную
-        </a>
+        <h3 class="empty-state-title">Автомобили не найдены</h3>
+        <p class="empty-state-text">
+            Попробуйте изменить параметры фильтрации или добавьте автомобили через админ-панель.
+        </p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a href="/admin/calculator/righthandcar/add/" class="btn btn-danger">
+                <i class="bi bi-plus-circle me-2"></i>Добавить автомобиль
+            </a>
+            <a href="{% url 'home' %}" class="btn btn-outline-dark">
+                <i class="bi bi-house me-2"></i>На главную
+            </a>
+        </div>
     </div>
     {% endif %}
 </div>
@@ -265,7 +413,6 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Восстановление значений фильтров из URL
     const urlParams = new URLSearchParams(window.location.search);
     const brandSelect = document.querySelector('select[name="brand"]');
     const fuelSelect = document.querySelector('select[name="fuel_type"]');
@@ -281,16 +428,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (yearInput && urlParams.has('year_from')) {
         yearInput.value = urlParams.get('year_from');
-    }
-    
-    // Подсветка выбранного автомобиля в URL
-    const carIdFromUrl = urlParams.get('car');
-    if (carIdFromUrl) {
-        const carCard = document.querySelector(`[data-car-id="${carIdFromUrl}"]`);
-        if (carCard) {
-            carCard.style.boxShadow = '0 0 0 3px #667eea';
-            carCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
     }
 });
 </script>
