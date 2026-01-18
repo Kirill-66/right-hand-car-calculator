@@ -406,13 +406,17 @@
     <div class="row">
         <div class="col-lg-8">
             <div class="total-cost-card">
-                <h3 class="mb-3">Итоговая стоимость владения</h3>
-                <div class="total-amount">{{ total_cost|floatformat:0 }} ₽</div>
-                <div class="cost-per-year">≈ {{ per_year|floatformat:0 }} ₽ в год</div>
-                <p class="cost-detail">
-                    Дополнительные расходы сверх стоимости автомобиля {{ price_rub|floatformat:0 }} ₽
-                </p>
+            <h3 class="mb-3">Итоговая стоимость владения</h3>
+            <div class="total-amount">{{ calculation.total_cost|floatformat:0 }} ₽</div>
+            <div class="cost-detail">
+                Включая стоимость автомобиля {{ price_rub|floatformat:0 }} ₽
+                и дополнительные расходы {{ calculation.additional_costs|default:0|floatformat:0 }} ₽
             </div>
+            <div class="cost-per-year">≈ {{ per_year|floatformat:0 }} ₽ в год</div>
+            <p class="cost-detail">
+                Дополнительные расходы сверх стоимости автомобиля {{ calculation.additional_costs|default:0|floatformat:0 }} ₽
+            </p>
+        </div>
             
             <div class="breakdown-card">
                 <h3 class="breakdown-title"><i class="bi bi-pie-chart"></i>Детализация расходов</h3>

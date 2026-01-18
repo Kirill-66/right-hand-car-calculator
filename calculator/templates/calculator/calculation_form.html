@@ -285,15 +285,18 @@
             <div class="form-container">
                 <h2 class="form-section-title">Заполните данные для расчета</h2>
                 
-                <form method="post" novalidate>
+                <form method="post" action="{% url 'calculation_create' %}" novalidate>
                     {% csrf_token %}
                     
-                    {% if form.non_field_errors %}
+                    {% if form.errors %}
                     <div class="alert alert-danger">
                         <i class="bi bi-exclamation-triangle me-2"></i>
-                        {% for error in form.non_field_errors %}
-                            {{ error }}
-                        {% endfor %}
+                        Пожалуйста, исправьте ошибки в форме.
+                        <ul class="mt-2 mb-0">
+                            {% for field, errors in form.errors.items %}
+                                <li>{{ field }}: {{ errors|striptags }}</li>
+                            {% endfor %}
+                        </ul>
                     </div>
                     {% endif %}
                     
@@ -309,7 +312,7 @@
                             {% endfor %}
                         </ul>
                         {% endif %}
-                        <small class="help-text">Выберите модель из каталога или введите параметры вручную</small>
+                        <small class="help-text">Выберите модель из каталога</small>
                     </div>
                     
                     <div class="form-group">
@@ -329,6 +332,21 @@
                         {% endif %}
                         <small class="help-text">{{ form.purchase_price_jpy.help_text }}</small>
                         <div id="priceHint" class="help-text"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="id_purchase_year">
+                            <i class="bi bi-calendar"></i>Год покупки
+                        </label>
+                        {{ form.purchase_year }}
+                        {% if form.purchase_year.errors %}
+                        <ul class="error-list">
+                            {% for error in form.purchase_year.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                        <small class="help-text">Год, когда планируете купить автомобиль</small>
                     </div>
                     
                     <div class="form-group">
@@ -447,11 +465,13 @@
                         <i class="bi bi-list-ul me-2"></i>Смотреть каталог авто
                     </a>
                 </div>
+                {% if user.is_authenticated %}
                 <div class="col-md-4 mb-3">
                     <a href="{% url 'my_calculations' %}" class="btn btn-outline-secondary w-100">
                         <i class="bi bi-folder me-2"></i>Мои расчеты
                     </a>
                 </div>
+                {% endif %}
                 <div class="col-md-4 mb-3">
                     <a href="{% url 'home' %}" class="btn btn-outline-dark w-100">
                         <i class="bi bi-house me-2"></i>На главную
@@ -466,36 +486,74 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const inputs = document.querySelectorAll('input, select, textarea');
-    inputs.forEach(input => {
-        if (input.tagName === 'SELECT') {
-            input.classList.add('form-control-custom', 'select');
-        } else if (input.type !== 'hidden' && !input.classList.contains('btn')) {
-            input.classList.add('form-control-custom');
-        }
-    });
-    
     const priceInput = document.querySelector('#id_purchase_price_jpy');
     const priceHint = document.getElementById('priceHint');
     
-    if (priceInput && priceHint) {
-        function updatePriceHint() {
-            const price = parseInt(priceInput.value.replace(/\s/g, '')) || 0;
-            const rub = Math.round(price * 0.6);
-            
-            if (price > 0) {
-                priceHint.innerHTML = `≈ ${rub.toLocaleString('ru-RU')} ₽ по текущему курсу (1 ¥ = 0.6 ₽)`;
-                priceHint.style.color = '#ff3b30';
-                priceHint.style.fontWeight = '600';
-            } else {
-                priceHint.innerHTML = 'Введите стоимость автомобиля в японских йенах';
-                priceHint.style.color = '#666';
-                priceHint.style.fontWeight = 'normal';
+    function updatePriceHint() {
+        if (!priceInput || !priceHint) return;
+        
+        let priceStr = priceInput.value;
+        priceStr = priceStr.replace(/\s/g, '');
+        const price = parseInt(priceStr) || 0;
+        const rate = 0.6;
+        const rub = Math.round(price * rate);
+        
+        if (price > 0) {
+            priceHint.innerHTML = `≈ ${rub.toLocaleString('ru-RU')} ₽`;
+            priceHint.style.color = '#ff3b30';
+            priceHint.style.fontWeight = '600';
+        } else {
+            priceHint.innerHTML = 'Введите стоимость автомобиля в японских йенах';
+            priceHint.style.color = '#666';
+            priceHint.style.fontWeight = 'normal';
+        }
+    }
+    
+    function formatPriceInput() {
+        if (!priceInput) return;
+        
+        let value = priceInput.value;
+        const cursorFromEnd = value.length - priceInput.selectionStart;
+        
+        let digits = value.replace(/[^\d]/g, '');
+        
+        let formatted = '';
+        for (let i = 0; i < digits.length; i++) {
+            if (i > 0 && (digits.length - i) % 3 === 0) {
+                formatted += ' ';
             }
+            formatted += digits[i];
         }
         
-        priceInput.addEventListener('input', updatePriceHint);
+        priceInput.value = formatted;
+        updatePriceHint();
+    }
+    
+    if (priceInput) {
+        priceInput.type = 'text';
+        priceInput.removeAttribute('max');
+        priceInput.setAttribute('inputmode', 'numeric');
+        priceInput.setAttribute('pattern', '[0-9\\s]*');
+        
+        if (!priceInput.placeholder) {
+            priceInput.placeholder = 'Например: 1 000 000';
+        }
+        
+        priceInput.addEventListener('input', formatPriceInput);
+        
+        if (priceInput.value) {
+            formatPriceInput();
+        }
+        
         priceInput.addEventListener('change', updatePriceHint);
+        priceInput.addEventListener('blur', updatePriceHint);
+        
+        const form = priceInput.closest('form');
+        if (form) {
+            form.addEventListener('submit', function() {
+                priceInput.value = priceInput.value.replace(/\s/g, '');
+            });
+        }
         
         updatePriceHint();
     }
@@ -509,25 +567,6 @@ document.addEventListener('DOMContentLoaded', function() {
             field.querySelector('.form-control-custom').classList.add('field-error');
         }
     });
-    
-    if (priceInput) {
-        priceInput.addEventListener('input', function(e) {
-            let value = this.value.replace(/\D/g, '');
-            value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-            this.value = value;
-        });
-    }
-    
-    const regionSelect = document.querySelector('#id_region');
-    if (regionSelect) {
-        regionSelect.addEventListener('change', function() {
-            const selectedOption = this.options[this.selectedIndex];
-            const hint = selectedOption.getAttribute('data-hint');
-            if (hint) {
-                console.log('Региональные особенности:', hint);
-            }
-        });
-    }
 });
 </script>
 {% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'calculator/base.html' %}
+
+{% block title %}Удалить автомобиль - JDM Calculator{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h2 class="mb-0">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Подтверждение удаления
+                    </h2>
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        <i class="bi bi-trash" style="font-size: 4rem; color: #dc3545;"></i>
+                    </div>
+                    
+                    <h4 class="mb-3">Вы уверены, что хотите удалить автомобиль?</h4>
+                    
+                    <div class="alert alert-warning mb-4">
+                        <div class="fw-bold">{{ car.brand }} {{ car.model }}</div>
+                        {% if car.generation %}
+                        <div>{{ car.generation }}</div>
+                        {% endif %}
+                        <div class="text-muted">{{ car.year_from }} - {{ car.year_to }}</div>
+                    </div>
+                    
+                    <p class="text-danger mb-4">
+                        <i class="bi bi-exclamation-circle me-2"></i>
+                        Это действие невозможно отменить. Все расчеты для этого автомобиля также будут удалены.
+                    </p>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="{% url 'car_detail' car.id %}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle me-2"></i>Отмена
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash me-2"></i>Да, удалить
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

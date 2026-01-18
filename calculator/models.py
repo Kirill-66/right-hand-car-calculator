@@ -83,14 +83,12 @@ class RightHandCar(models.Model):
     
     @property
     def years_range(self):
-        """Диапазон лет выпуска"""
         if self.year_from == self.year_to:
             return str(self.year_from)
         return f"{self.year_from}-{self.year_to}"
     
     @property
     def brand_display(self):
-        """Человеко-читаемое название марки"""
         return self.get_brand_display()
 
 
@@ -153,6 +151,70 @@ class OwnershipCalculation(models.Model):
         default='moscow'
     )
     
+    total_cost = models.DecimalField(
+        verbose_name="Полная стоимость владения",
+        max_digits=12,
+        decimal_places=2,
+        null=True,
+        blank=True
+    )
+    
+    additional_costs = models.DecimalField(
+        verbose_name="Дополнительные расходы",
+        max_digits=12,
+        decimal_places=2,
+        null=True,
+        blank=True
+    )
+    
+    customs_cost = models.DecimalField(
+        verbose_name="Таможня",
+        max_digits=12,
+        decimal_places=2,
+        null=True,
+        blank=True
+    )
+    
+    adaptation_cost = models.DecimalField(
+        verbose_name="Адаптация",
+        max_digits=12,
+        decimal_places=2,
+        null=True,
+        blank=True
+    )
+    
+    insurance_cost = models.DecimalField(
+        verbose_name="Страховка",
+        max_digits=12,
+        decimal_places=2,
+        null=True,
+        blank=True
+    )
+    
+    fuel_cost = models.DecimalField(
+        verbose_name="Топливо",
+        max_digits=12,
+        decimal_places=2,
+        null=True,
+        blank=True
+    )
+    
+    maintenance_cost = models.DecimalField(
+        verbose_name="ТО и ремонты",
+        max_digits=12,
+        decimal_places=2,
+        null=True,
+        blank=True
+    )
+    
+    tax_cost = models.DecimalField(
+        verbose_name="Транспортный налог",
+        max_digits=12,
+        decimal_places=2,
+        null=True,
+        blank=True
+    )
+    
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name="Дата создания"
@@ -173,12 +235,10 @@ class OwnershipCalculation(models.Model):
     
     @property
     def price_in_rub(self):
-        """Конвертирует цену в йенах в рубли"""
         return self.purchase_price_jpy * 0.6
     
     @property
     def total_mileage(self):
-        """Общий пробег за весь срок владения"""
         return self.annual_mileage * self.ownership_years
 
 

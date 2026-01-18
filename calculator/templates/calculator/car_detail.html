@@ -1,0 +1,246 @@
+{% extends 'calculator/base.html' %}
+
+{% block title %}{{ car.brand }} {{ car.model }} - JDM Calculator{% endblock %}
+
+{% block extra_css %}
+<style>
+.car-detail-header {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    color: white;
+    padding: 60px 0 40px;
+    margin-bottom: 30px;
+    border-radius: 0 0 8px 8px;
+}
+.car-image-container {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 3px 20px rgba(0,0,0,0.08);
+    border: 1px solid #e8e8e8;
+    margin-bottom: 30px;
+}
+.car-image {
+    width: 100%;
+    border-radius: 8px;
+}
+.specs-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 3px 20px rgba(0,0,0,0.08);
+    border: 1px solid #e8e8e8;
+    margin-bottom: 30px;
+}
+.specs-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #ff3b30;
+}
+.spec-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+.spec-item:last-child {
+    border-bottom: none;
+}
+.spec-label {
+    color: #666;
+}
+.spec-value {
+    color: #333;
+    font-weight: 600;
+}
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="car-detail-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="display-5 fw-bold mb-3">{{ car.brand }} {{ car.model }}</h1>
+                {% if car.generation %}
+                <h3 class="text-light mb-4">{{ car.generation }}</h3>
+                {% endif %}
+                <p class="lead mb-0">Годы выпуска: {{ car.year_from }} - {{ car.year_to }}</p>
+            </div>
+            <div class="col-md-4 text-end">
+                {% if user.is_superuser %}
+                <div class="action-buttons justify-content-end">
+                    <a href="{% url 'car_update' car.id %}" class="btn btn-outline-light">
+                        <i class="bi bi-pencil me-2"></i>Редактировать
+                    </a>
+                    <a href="{% url 'car_delete' car.id %}" class="btn btn-outline-danger">
+                        <i class="bi bi-trash me-2"></i>Удалить
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="car-image-container">
+                {% if car.image_url %}
+                <img src="{{ car.image_url }}" alt="{{ car.brand }} {{ car.model }}" class="car-image">
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-car-front" style="font-size: 10rem; color: #e0e0e0;"></i>
+                    <p class="text-muted mt-3">Изображение отсутствует</p>
+                </div>
+                {% endif %}
+            </div>
+
+            {% if car.description %}
+            <div class="specs-card">
+                <h3 class="specs-title">Описание</h3>
+                <p>{{ car.description|linebreaks }}</p>
+            </div>
+            {% endif %}
+
+            {% if calculations %}
+            <div class="specs-card">
+                <h3 class="specs-title">Последние расчеты</h3>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Стоимость (¥)</th>
+                                <th>Регион</th>
+                                <th>Срок владения</th>
+                                <th>Итоговая стоимость</th>
+                                <th>Дата</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for calc in calculations %}
+                            <tr>
+                                <td>{{ calc.purchase_price_jpy|floatformat:0 }} ¥</td>
+                                <td>{{ calc.get_region_display }}</td>
+                                <td>{{ calc.ownership_years }} лет</td>
+                                <td class="fw-bold text-danger">{{ calc.total_cost|floatformat:0 }} ₽</td>
+                                <td>{{ calc.created_at|date:"d.m.Y" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="col-lg-4">
+            <div class="specs-card">
+                <h3 class="specs-title">Технические характеристики</h3>
+                
+                <div class="spec-item">
+                    <span class="spec-label">Марка:</span>
+                    <span class="spec-value">{{ car.get_brand_display }}</span>
+                </div>
+                
+                <div class="spec-item">
+                    <span class="spec-label">Модель:</span>
+                    <span class="spec-value">{{ car.model }}</span>
+                </div>
+                
+                {% if car.generation %}
+                <div class="spec-item">
+                    <span class="spec-label">Поколение:</span>
+                    <span class="spec-value">{{ car.generation }}</span>
+                </div>
+                {% endif %}
+                
+                <div class="spec-item">
+                    <span class="spec-label">Годы выпуска:</span>
+                    <span class="spec-value">{{ car.year_from }} - {{ car.year_to }}</span>
+                </div>
+                
+                <div class="spec-item">
+                    <span class="spec-label">Объем двигателя:</span>
+                    <span class="spec-value">{{ car.engine_volume }} л</span>
+                </div>
+                
+                {% if car.power_hp %}
+                <div class="spec-item">
+                    <span class="spec-label">Мощность:</span>
+                    <span class="spec-value">{{ car.power_hp }} л.с.</span>
+                </div>
+                {% endif %}
+                
+                <div class="spec-item">
+                    <span class="spec-label">Тип топлива:</span>
+                    <span class="spec-value">{{ car.get_fuel_type_display }}</span>
+                </div>
+                
+                {% if car.fuel_consumption %}
+                <div class="spec-item">
+                    <span class="spec-label">Расход топлива:</span>
+                    <span class="spec-value">{{ car.fuel_consumption }} л/100км</span>
+                </div>
+                {% endif %}
+                
+                <div class="spec-item">
+                    <span class="spec-label">Коробка передач:</span>
+                    <span class="spec-value">{{ car.get_transmission_display }}</span>
+                </div>
+                
+                <div class="spec-item">
+                    <span class="spec-label">Привод:</span>
+                    <span class="spec-value">{{ car.get_drive_type_display }}</span>
+                </div>
+                
+                {% if car.avg_price_jpy %}
+                <div class="spec-item">
+                    <span class="spec-label">Средняя цена в Японии:</span>
+                    <span class="spec-value text-danger fw-bold">{{ car.avg_price_jpy|floatformat:0 }} ¥</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="specs-card">
+                <h3 class="specs-title">Статистика</h3>
+                
+                <div class="spec-item">
+                    <span class="spec-label">Количество расчетов:</span>
+                    <span class="spec-value">{{ total_calculations }}</span>
+                </div>
+                
+                {% if avg_total_cost %}
+                <div class="spec-item">
+                    <span class="spec-label">Средняя стоимость владения:</span>
+                    <span class="spec-value text-success fw-bold">{{ avg_total_cost|floatformat:0 }} ₽</span>
+                </div>
+                {% endif %}
+                
+                <div class="spec-item">
+                    <span class="spec-label">Добавлен:</span>
+                    <span class="spec-value">{{ car.created_at|date:"d.m.Y" }}</span>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2">
+                <a href="{% url 'calculation_create' %}?car={{ car.id }}" class="btn btn-danger btn-lg">
+                    <i class="bi bi-calculator me-2"></i>Рассчитать стоимость владения
+                </a>
+                
+                <a href="{% url 'car_list' %}" class="btn btn-outline-dark">
+                    <i class="bi bi-arrow-left me-2"></i>Назад к каталогу
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

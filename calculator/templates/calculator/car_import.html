@@ -1,0 +1,61 @@
+{% extends 'calculator/base.html' %}
+
+{% block title %}Импорт автомобилей - JDM Calculator{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h2 class="mb-0">
+                        <i class="bi bi-upload me-2"></i>
+                        Импорт автомобилей из CSV
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label for="csv_file" class="form-label fw-bold">CSV файл</label>
+                            <input type="file" class="form-control" id="csv_file" name="csv_file" accept=".csv" required>
+                            <small class="text-muted">
+                                Файл должен содержать колонки: brand, model, generation, year_from, year_to, engine_volume, fuel_type, fuel_consumption, power_hp, transmission, drive_type
+                            </small>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="update_existing" name="update_existing" checked>
+                                <label class="form-check-label" for="update_existing">
+                                    Обновлять существующие записи
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <h5><i class="bi bi-info-circle me-2"></i>Пример CSV файла:</h5>
+                            <pre class="mt-2">
+brand,model,generation,year_from,year_to,engine_volume,fuel_type,fuel_consumption,power_hp,transmission,drive_type,avg_price_jpy
+toyota,Mark II,JZX100,1998,2004,2.5,petrol,11.0,280,automatic,rwd,500000
+nissan,Skyline,R34,1999,2002,2.6,petrol,12.5,280,manual,rwd,600000
+subaru,Impreza,GC8,1993,2000,2.0,petrol,10.5,250,manual,awd,350000
+                            </pre>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'car_list' %}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Назад к каталогу
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-upload me-2"></i>Импортировать
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

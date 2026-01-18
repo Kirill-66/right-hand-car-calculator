@@ -1,0 +1,73 @@
+{% for car in page_obj %}
+<div class="col-xl-3 col-lg-4 col-md-6">
+    <div class="car-card">
+        <div class="car-image">
+            {% if car.image %}
+            <img src="{{ car.image.url }}" alt="{{ car.brand }} {{ car.model }}" style="width: 100%; height: 100%; object-fit: cover;">
+            {% else %}
+            <i class="bi bi-car-front"></i>
+            {% endif %}
+        </div>
+        <div class="car-content">
+            <div class="car-brand">{{ car.get_brand_display }}</div>
+            <h4 class="car-model">{{ car.model }}</h4>
+            
+            <div class="car-specs">
+                <div class="car-spec-item">
+                    <span class="spec-label">Годы выпуска:</span>
+                    <span class="spec-value">{{ car.year_from }} - {{ car.year_to }}</span>
+                </div>
+                <div class="car-spec-item">
+                    <span class="spec-label">Объем двигателя:</span>
+                    <span class="spec-value">{{ car.engine_volume }} л</span>
+                </div>
+                <div class="car-spec-item">
+                    <span class="spec-label">Тип топлива:</span>
+                    <span class="spec-value">{{ car.get_fuel_type_display }}</span>
+                </div>
+                <div class="car-spec-item">
+                    <span class="spec-label">Расход топлива:</span>
+                    <span class="spec-value">{{ car.fuel_consumption }} л/100км</span>
+                </div>
+                {% if car.avg_price_jpy %}
+                <div class="car-spec-item">
+                    <span class="spec-label">Средняя цена:</span>
+                    <span class="spec-value text-danger fw-bold">{{ car.avg_price_jpy|floatformat:0 }} ¥</span>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="d-flex gap-2 mt-3">
+                <a href="{% url 'calculation_create' %}?car={{ car.id }}" class="car-btn flex-grow-1">
+                    <i class="bi bi-calculator me-2"></i>Рассчитать стоимость
+                </a>
+                
+                {% if user.is_superuser %}
+                <div class="car-actions">
+                    <a href="{% url 'car_update' car.id %}" class="btn btn-sm edit-btn" 
+                       title="Редактировать" data-bs-toggle="tooltip">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <a href="{% url 'car_delete' car.id %}" class="btn btn-sm delete-btn" 
+                       title="Удалить" data-bs-toggle="tooltip">
+                        <i class="bi bi-trash"></i>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% empty %}
+<div class="col-12">
+    <div class="empty-state">
+        <div class="empty-state-icon">
+            <i class="bi bi-car-front"></i>
+        </div>
+        <h3 class="empty-state-title">Автомобили не найдены</h3>
+        <p class="empty-state-text">
+            Попробуйте изменить параметры фильтрации.
+        </p>
+    </div>
+</div>
+{% endfor %}
