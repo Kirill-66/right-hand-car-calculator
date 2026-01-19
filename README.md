@@ -1,110 +1,123 @@
-# JDM Calculator
-# О проекте
-JDM Calculator — это веб-сервис для расчета полной стоимости владения праворульным автомобилем из Японии. Сервис позволяет точно рассчитать все расходы, связанные с покупкой и оформлением JDM (Japanese Domestic Market) автомобиля, включая таможенные пошлины, доставку, растаможку и дополнительные сборы.
+# JDM Calculator (Right-Hand Car Calculator)
 
-# Основные функции
-# Реализованные функции
-Главная страница с информацией о сервисе
-Быстрый расчет стоимости популярных моделей автомобилей
-Валютный виджет с актуальными курсами JPY, USD, EUR, CNY
-Каталог популярных моделей с техническими характеристиками
-Адаптивный дизайн для мобильных устройств и десктопов
-Автоматический пересчет цен в рубли по текущему курсу
+## О проекте
+JDM Calculator — веб-сервис для расчета полной стоимости владения праворульным автомобилем из Японии. **Актуальное название проекта: Right-Hand Car Calculator**.
 
-# Популярные модели для расчета
-Toyota Mark II JZX100 (1998, 2.5 л, 280 л.с.)
-Nissan Skyline GT-R R34 (2001, 2.6 л, 320 л.с.)
-Subaru Legacy B4 BL5 (2005, 2.0 л, 250 л.с.)
-Mitsubishi Lancer Evolution VIII (2003, 2.0 л, 280 л.с.)
+## Технологический стек
+### Backend
+- Python 3.x
+- Django 4.2.11
+- MySQL (используется в текущей версии)
 
-# Технологический стек
-Backend
-Python 3.x
-Django 4.x
-PostgreSQL (планируется)
+### Frontend
+- HTML5, CSS3, JavaScript
+- Bootstrap 5
+- Chart.js (для визуализации расходов)
 
-Frontend
-HTML5
-CSS3
-JavaScript (Vanilla)
-Bootstrap 5
-Bootstrap Icons
+### База данных
+- MySQL (текущая реализация)
+- PostgreSQL (планируется в будущих версиях)
 
-# Инфраструктура
-Docker (планируется)
-Nginx (планируется)
-Gunicorn (планируется)
+## Установка и запуск
 
-# Установка и запуск
-Предварительные требования
-Python 3.8 или выше
-pip (менеджер пакетов Python)
-Виртуальное окружение Python (рекомендуется)
+### Требования
+- Python 3.8+
+- MySQL Server
+- Git
 
-# Шаг 1: Клонирование репозитория
-git clone <ссылка-на-репозиторий>
-cd jdm-calculator
+### Шаги установки
+1. **Клонирование репозитория**
+   ```bash
+   git clone https://github.com/ваш-аккаунт/right-hand-car-calculator.git
+   cd right-hand-car-calculator
 
-# Шаг 2: Создание виртуального окружения
+Настройка виртуального окружения
+bash
 python -m venv venv
-
-Активация на Windows:
+# Windows:
 venv\Scripts\activate
+# Linux/Mac:
+source venv/bin/activate
 
-# Шаг 3: Установка зависимостей
-pip install django==4.2
-pip install psycopg2-binary
+Установка зависимостей
+bash
+pip install -r requirements.txt
 
-# Шаг 4: Настройка базы данных
-Создание базы данных PostgreSQL:
-CREATE DATABASE jdm_calculator;
-CREATE USER jdm_user WITH PASSWORD 'your_password';
-GRANT ALL PRIVILEGES ON DATABASE jdm_calculator TO jdm_user;
+Настройка базы данных MySQL
+sql
+CREATE DATABASE car_calculator;
+CREATE USER 'jdm_user'@'localhost' IDENTIFIED BY 'ваш_пароль';
+GRANT ALL PRIVILEGES ON car_calculator.* TO 'jdm_user'@'localhost';
+FLUSH PRIVILEGES;
 
-Настройка подключения в settings.py:
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'jdm_calculator',
-        'USER': 'jdm_user',
-        'PASSWORD': 'your_password',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-}
+Настройка переменных окружения
+Создайте файл .env на основе .env.example:
+env
+SECRET_KEY=ваш-секретный-ключ
+DEBUG=False
+DB_NAME=car_calculator
+DB_USER=jdm_user
+DB_PASSWORD=ваш_пароль
+DB_HOST=localhost
+DB_PORT=3306
 
-# Шаг 5: Применение миграций
-python manage.py makemigrations calculator
+Применение миграций
+bash
 python manage.py migrate
 
-# Шаг 6: Создание суперпользователя
-python manage.py createsuperuser
+Запуск сервера
 
-# Шаг 7: Запуск сервера разработки
+bash
 python manage.py runserver
 
-# Структура проекта
-jdm-calculator/
-├── calculator/          # Основное приложение
+Доступ к сайту
+Откройте в браузере: http://localhost:8000
+
+Структура проекта
+text
+right-hand-car-calculator/
+├── calculator/          # Основное Django-приложение
 │   ├── migrations/     # Миграции базы данных
-│   ├── static/         # Статические файлы
-│   │   └── calculator/
-│   │       ├── css/    # CSS файлы
-│   │       ├── js/     # JavaScript файлы
-│   │       └── img/    # Изображения
+│   ├── static/         # Статические файлы (CSS, JS, изображения)
 │   ├── templates/      # HTML шаблоны
-│   │   └── calculator/
-│   │       ├── base.html
-│   │       └── home.html
-│   ├── models.py       # Модели данных
-│   ├── views.py        # Представления
-│   ├── urls.py         # URL маршруты
-│   └── admin.py        # Админ-панель
-├── jdm_calculator/     # Настройки проекта
-│   ├── settings.py     # Настройки
-│   ├── urls.py         # Главные URL
+│   ├── models.py       # Модели данных (Car, Calculation, User)
+│   ├── views.py        # Контроллеры
+│   ├── urls.py         # Маршруты приложения
+│   └── admin.py        # Админ-панель Django
+├── carcost/            # Настройки проекта Django
+│   ├── settings.py     # Конфигурация
+│   ├── urls.py         # Главные URL-маршруты
 │   └── wsgi.py         # WSGI конфигурация
-├── manage.py           # Управляющий скрипт
+├── static/             # Глобальные статические файлы
+├── media/              # Загружаемые файлы (в .gitignore)
+├── .env.example        # Шаблон переменных окружения
 ├── requirements.txt    # Зависимости Python
-├── README.md           # Документация
+├── manage.py           # Управляющий скрипт Django
+├── README.md           # Эта документация
 └── TZ.md              # Техническое задание
+
+Функциональность
+Реализовано
+Главная страница с информацией о сервисе
+
+Калькулятор стоимости владения автомобилем
+
+Визуализация расходов (диаграммы Chart.js)
+
+База автомобилей с характеристиками
+
+Расчет таможенных пошлин, доставки, страховки
+
+Адаптивный дизайн для мобильных устройств
+
+Планы по доработке
+Экспорт расчетов в PDF
+
+Сравнение нескольких автомобилей
+
+Уведомления об изменениях курсов валют
+
+Мобильное приложение
+
+Лицензия
+Проект распространяется под лицензией MIT. Подробнее см. в файле LICENSE.
