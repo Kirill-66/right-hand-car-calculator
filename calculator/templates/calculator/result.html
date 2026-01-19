@@ -144,6 +144,203 @@
         font-weight: 500;
     }
     
+    .chart-card {
+        background: white;
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        border: 1px solid #e8e8e8;
+        margin-bottom: 30px;
+    }
+    
+    .chart-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #f0f0f0;
+        display: flex;
+        align-items: center;
+    }
+    
+    .chart-title i {
+        color: #ff3b30;
+        margin-right: 10px;
+    }
+    
+    .chart-container {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        border: 1px solid #e8e8e8;
+        height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    #expensesChart {
+        max-height: 250px;
+        max-width: 100%;
+    }
+    
+    .analysis-section {
+        margin-top: 20px;
+    }
+    
+    .analysis-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+    
+    @media (max-width: 768px) {
+        .analysis-row {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    .analysis-item {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 15px;
+        border: 1px solid #e8e8e8;
+    }
+    
+    .analysis-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    
+    .analysis-icon {
+        width: 40px;
+        height: 40px;
+        background: white;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 12px;
+        font-size: 1.3rem;
+        border: 1px solid #e8e8e8;
+    }
+    
+    .analysis-label {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 3px;
+    }
+    
+    .analysis-value {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1a1a1a;
+    }
+    
+    .analysis-subtext {
+        font-size: 0.85rem;
+        color: #666;
+        line-height: 1.4;
+        margin-bottom: 8px;
+    }
+    
+    .insight-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    
+    .badge-high {
+        background: #fff5f5;
+        color: #ff3b30;
+        border: 1px solid #ffcdd2;
+    }
+    
+    .badge-medium {
+        background: #fff3e0;
+        color: #ff9500;
+        border: 1px solid #ffe0b2;
+    }
+    
+    .badge-low {
+        background: #e8f5e9;
+        color: #00a046;
+        border: 1px solid #c8e6c9;
+    }
+    
+    .cost-comparison {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin: 20px 0;
+    }
+    
+    @media (max-width: 576px) {
+        .cost-comparison {
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+    }
+    
+    .comparison-item {
+        text-align: center;
+        padding: 12px;
+        background: #f8f9fa;
+        border-radius: 6px;
+        border: 1px solid #e8e8e8;
+    }
+    
+    .comparison-label {
+        font-size: 0.85rem;
+        color: #666;
+        margin-bottom: 5px;
+    }
+    
+    .comparison-value {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #1a1a1a;
+    }
+    
+    .savings-tips {
+        background: #e8f5e9;
+        border-radius: 8px;
+        padding: 15px;
+        border-left: 4px solid #00a046;
+    }
+    
+    .savings-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .savings-title i {
+        color: #00a046;
+        margin-right: 8px;
+    }
+    
+    .savings-list {
+        margin: 0;
+        padding-left: 18px;
+        color: #555;
+        font-size: 0.9rem;
+    }
+    
+    .savings-list li {
+        margin-bottom: 6px;
+        line-height: 1.4;
+    }
+    
     .actions-section {
         background: white;
         border-radius: 10px;
@@ -390,6 +587,10 @@
         .info-grid {
             grid-template-columns: 1fr;
         }
+        
+        .chart-container {
+            height: 250px;
+        }
     }
 </style>
 {% endblock %}
@@ -406,20 +607,20 @@
     <div class="row">
         <div class="col-lg-8">
             <div class="total-cost-card">
-            <h3 class="mb-3">Итоговая стоимость владения</h3>
-            <div class="total-amount">{{ calculation.total_cost|floatformat:0 }} ₽</div>
-            <div class="cost-detail">
-                Включая стоимость автомобиля {{ price_rub|floatformat:0 }} ₽
-                и дополнительные расходы {{ calculation.additional_costs|default:0|floatformat:0 }} ₽
+                <h3 class="mb-3">Итоговая стоимость владения</h3>
+                <div class="total-amount">{{ calculation.total_cost|floatformat:0 }} ₽</div>
+                <div class="cost-detail">
+                    Включая стоимость автомобиля {{ price_rub|floatformat:0 }} ₽
+                    и дополнительные расходы {{ calculation.additional_costs|default:0|floatformat:0 }} ₽
+                </div>
+                <div class="cost-per-year">≈ {{ per_year|floatformat:0 }} ₽ в год</div>
+                <p class="cost-detail">
+                    Дополнительные расходы сверх стоимости автомобиля {{ calculation.additional_costs|default:0|floatformat:0 }} ₽
+                </p>
             </div>
-            <div class="cost-per-year">≈ {{ per_year|floatformat:0 }} ₽ в год</div>
-            <p class="cost-detail">
-                Дополнительные расходы сверх стоимости автомобиля {{ calculation.additional_costs|default:0|floatformat:0 }} ₽
-            </p>
-        </div>
             
             <div class="breakdown-card">
-                <h3 class="breakdown-title"><i class="bi bi-pie-chart"></i>Детализация расходов</h3>
+                <h3 class="breakdown-title"><i class="bi bi-list-check"></i>Детализация расходов</h3>
                 
                 <div class="cost-item">
                     <div class="cost-label">
@@ -484,6 +685,159 @@
                     <div class="cost-amount">
                         {{ breakdown.tax|floatformat:0 }} ₽
                         <span class="percentage">({{ breakdown.tax_percent }}%)</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <h3 class="chart-title"><i class="bi bi-pie-chart"></i>Визуализация расходов</h3>
+                
+                <div class="row">
+                    <div class="col-md-12 mb-4">
+                        <div class="chart-container">
+                            <canvas id="expensesChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-12">
+                        <div class="analysis-section">
+                            <div class="analysis-row">
+                                <div class="analysis-item">
+                                    <div class="analysis-header">
+                                        <div class="analysis-icon" style="color: #ff9500;">🔧</div>
+                                        <div>
+                                            <div class="analysis-label">Самый большой расход</div>
+                                            <div class="analysis-value">
+                                                {% if breakdown.adaptation_percent == max_percent %}
+                                                Адаптация
+                                                {% elif breakdown.customs_percent == max_percent %}
+                                                Таможня
+                                                {% elif breakdown.fuel_percent == max_percent %}
+                                                Топливо
+                                                {% elif breakdown.insurance_percent == max_percent %}
+                                                Страховка
+                                                {% else %}
+                                                ТО и ремонты
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="analysis-subtext">
+                                        Составляет {{ max_percent|floatformat:1 }}% от дополнительных расходов
+                                    </div>
+                                    <span class="insight-badge badge-high">Высокие затраты</span>
+                                </div>
+                                
+                                <div class="analysis-item">
+                                    <div class="analysis-header">
+                                        <div class="analysis-icon" style="color: #00a046;">📉</div>
+                                        <div>
+                                            <div class="analysis-label">Наименьший расход</div>
+                                            <div class="analysis-value">
+                                                {% if breakdown.tax_percent == min_percent %}
+                                                Налог
+                                                {% elif breakdown.insurance_percent == min_percent %}
+                                                Страховка
+                                                {% elif breakdown.maintenance_percent == min_percent %}
+                                                ТО
+                                                {% elif breakdown.fuel_percent == min_percent %}
+                                                Топливо
+                                                {% elif breakdown.customs_percent == min_percent %}
+                                                Таможня
+                                                {% else %}
+                                                Адаптация
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="analysis-subtext">
+                                        Всего {{ min_percent|floatformat:1 }}% от дополнительных расходов
+                                    </div>
+                                    <span class="insight-badge badge-low">Низкие затраты</span>
+                                </div>
+                            </div>
+                            
+                            <div class="analysis-row">
+                                <div class="analysis-item">
+                                    <div class="analysis-header">
+                                        <div class="analysis-icon" style="color: #007aff;">⚖️</div>
+                                        <div>
+                                            <div class="analysis-label">Распределение</div>
+                                            <div class="analysis-value">{{ max_percent|floatformat:1 }} : {{ min_percent|floatformat:1 }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="analysis-subtext">
+                                        Разница между самым большим и самым малым расходом
+                                    </div>
+                                    {% if max_percent > min_percent|add:5 %}
+                                    <span class="insight-badge badge-high">Неравномерно</span>
+                                    {% elif max_percent > min_percent|add:3 %}
+                                    <span class="insight-badge badge-medium">Умеренно</span>
+                                    {% else %}
+                                    <span class="insight-badge badge-low">Равномерно</span>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="analysis-item">
+                                    <div class="analysis-header">
+                                        <div class="analysis-icon" style="color: #ff3b30;">💰</div>
+                                        <div>
+                                            <div class="analysis-label">Доп. расходы</div>
+                                            <div class="analysis-value">{{ calculation.additional_costs|default:0|floatformat:0 }} ₽</div>
+                                        </div>
+                                    </div>
+                                    <div class="analysis-subtext">
+                                        {% if price_rub > 0 %}
+                                        {{ additional_percent|floatformat:1 }}% от стоимости автомобиля
+                                        {% else %}
+                                        0% от стоимости автомобиля
+                                        {% endif %}
+                                    </div>
+                                    {% if additional_percent > 50 %}
+                                    <span class="insight-badge badge-high">Высокая надбавка</span>
+                                    {% elif additional_percent > 30 %}
+                                    <span class="insight-badge badge-medium">Средняя надбавка</span>
+                                    {% else %}
+                                    <span class="insight-badge badge-low">Низкая надбавка</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="cost-comparison">
+                                <div class="comparison-item">
+                                    <div class="comparison-label">Стоимость авто</div>
+                                    <div class="comparison-value">{{ price_rub|floatformat:0 }} ₽</div>
+                                </div>
+                                <div class="comparison-item">
+                                    <div class="comparison-label">Доп. расходы</div>
+                                    <div class="comparison-value" style="color: #ff3b30;">+{{ calculation.additional_costs|default:0|floatformat:0 }} ₽</div>
+                                </div>
+                                <div class="comparison-item">
+                                    <div class="comparison-label">Итого</div>
+                                    <div class="comparison-value" style="color: #00a046;">{{ calculation.total_cost|floatformat:0 }} ₽</div>
+                                </div>
+                            </div>
+                            
+                            <div class="savings-tips">
+                                <h5 class="savings-title"><i class="bi bi-lightbulb"></i>Как снизить расходы?</h5>
+                                <ul class="savings-list">
+                                    {% if breakdown.adaptation_percent == max_percent %}
+                                    <li>Ищите авто уже прошедшие адаптацию в РФ</li>
+                                    <li>Сравните цены в разных сервисах</li>
+                                    {% endif %}
+                                    {% if breakdown.customs_percent > 25 %}
+                                    <li>Следите за изменениями в таможенном законодательстве</li>
+                                    <li>Рассмотрите покупку через официального импортера</li>
+                                    {% endif %}
+                                    {% if breakdown.fuel_percent > 20 %}
+                                    <li>Рассмотрите модели с меньшим расходом топлива</li>
+                                    <li>Планируйте поездки для экономии топлива</li>
+                                    {% endif %}
+                                    <li>Регулярное ТО снижает расходы на ремонты</li>
+                                    <li>Сравните страховые предложения разных компаний</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -568,7 +922,7 @@
                     <i class="bi bi-save me-2"></i>Сохранить в профиль
                 </button>
                 {% else %}
-                <a href="/admin/login/" class="btn-new w-100">
+                <a href="{% url 'login' %}" class="btn-new w-100">
                     <i class="bi bi-box-arrow-in-right me-2"></i>Войти для сохранения
                 </a>
                 {% endif %}
@@ -579,6 +933,7 @@
 {% endblock %}
 
 {% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const items = document.querySelectorAll('.cost-item');
@@ -612,11 +967,102 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const totalAmount = document.querySelector('.total-amount');
     if (totalAmount) {
-        const amount = parseFloat('{{ total_cost }}') || 0;
+        const amount = parseFloat('{{ calculation.total_cost }}') || 0;
         if (amount > 1000000) {
             totalAmount.style.fontSize = '2.5rem';
         } else if (amount > 500000) {
             totalAmount.style.fontSize = '2.8rem';
+        }
+    }
+    
+    try {
+        const breakdown = {
+            customs: parseFloat('{{ breakdown.customs }}') || 0,
+            adaptation: parseFloat('{{ breakdown.adaptation }}') || 0,
+            insurance: parseFloat('{{ breakdown.insurance }}') || 0,
+            fuel: parseFloat('{{ breakdown.fuel }}') || 0,
+            maintenance: parseFloat('{{ breakdown.maintenance }}') || 0,
+            tax: parseFloat('{{ breakdown.tax }}') || 0
+        };
+        
+        const ctx = document.getElementById('expensesChart');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Таможня', 'Адаптация', 'Страховка', 'Топливо', 'ТО и налоги'],
+                    datasets: [{
+                        data: [
+                            breakdown.customs,
+                            breakdown.adaptation,
+                            breakdown.insurance,
+                            breakdown.fuel,
+                            breakdown.maintenance + breakdown.tax
+                        ],
+                        backgroundColor: ['#ff3b30','#ff9500','#00a046','#007aff','#5856d6'],
+                        borderColor: '#fff',
+                        borderWidth: 2,
+                        hoverBorderWidth: 3,
+                        hoverOffset: 15
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    size: 14,
+                                    family: "'Segoe UI', Roboto, sans-serif"
+                                },
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleFont: {
+                                size: 14
+                            },
+                            bodyFont: {
+                                size: 14
+                            },
+                            padding: 12,
+                            cornerRadius: 6,
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percent = total > 0 ? ((value / total) * 100).toFixed(1) : '0.0';
+                                    return `${context.label}: ${value.toLocaleString('ru-RU')} ₽ (${percent}%)`;
+                                }
+                            }
+                        }
+                    },
+                    animation: {
+                        animateScale: true,
+                        animateRotate: true,
+                        duration: 1500,
+                        easing: 'easeOutQuart'
+                    },
+                    cutout: '50%'
+                }
+            });
+        }
+    } catch (error) {
+        console.error('Error creating chart:', error);
+        const chartContainer = document.querySelector('.chart-container');
+        if (chartContainer) {
+            chartContainer.innerHTML = `
+                <div class="text-center text-muted">
+                    <i class="bi bi-exclamation-triangle" style="font-size: 3rem;"></i>
+                    <p class="mt-3">Не удалось загрузить диаграмму</p>
+                    <p class="small">Попробуйте обновить страницу</p>
+                </div>
+            `;
         }
     }
 });

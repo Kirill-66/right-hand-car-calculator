@@ -1,0 +1,62 @@
+{% extends 'calculator/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">Регистрация</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        {% if form.errors %}
+                        <div class="alert alert-danger">
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">Имя пользователя</label>
+                            <input type="text" name="username" id="id_username" 
+                                   class="form-control" required autofocus>
+                            <div class="form-text">Только буквы, цифры и @/./+/-/_</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_password1" class="form-label">Пароль</label>
+                            <input type="password" name="password1" id="id_password1" 
+                                   class="form-control" required>
+                            <div class="form-text">
+                                <ul class="small">
+                                    <li>Не менее 8 символов</li>
+                                    <li>Не только цифры</li>
+                                    <li>Не слишком простой</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_password2" class="form-label">Подтверждение пароля</label>
+                            <input type="password" name="password2" id="id_password2" 
+                                   class="form-control" required>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success">Зарегистрироваться</button>
+                            <a href="{% url 'login' %}" class="btn btn-outline-primary">Уже есть аккаунт? Войти</a>
+                            <a href="{% url 'home' %}" class="btn btn-link">На главную</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -11,17 +11,14 @@ class CalculationForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         current_year = datetime.now().year
         
-        # Динамически обновляем год покупки
         self.fields['purchase_year'].max_value = current_year
         self.fields['purchase_year'].initial = current_year
         
-        # Добавляем курс валют в подсказку
         self.fields['purchase_price_jpy'].help_text = mark_safe(
             'Средняя цена на аукционе в Японии<br>'
             '<small class="text-muted">1 ¥ ≈ 0.6 ₽ (примерный курс)</small>'
         )
         
-        # Оптимизируем запрос для выбора автомобиля
         self.fields['car'].queryset = RightHandCar.objects.all().order_by('brand', 'model')
     
     car = forms.ModelChoiceField(
@@ -182,7 +179,6 @@ class CalculationForm(forms.ModelForm):
         purchase_year = cleaned_data.get('purchase_year')
         car = cleaned_data.get('car')
         
-        # Проверка совместимости года покупки и года выпуска автомобиля
         if car and purchase_year:
             if purchase_year < car.year_from:
                 self.add_error(

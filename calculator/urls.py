@@ -1,4 +1,5 @@
 from django.urls import path
+from django.contrib.auth import views as auth_views
 from . import views
 
 urlpatterns = [
@@ -6,6 +7,18 @@ urlpatterns = [
     path('catalog/', views.car_list, name='car_list'),
     path('calculator/', views.calculation_create, name='calculation_create'),
     path('calculator/<int:calculation_id>/', views.calculation_result, name='calculation_result'),
+    
+    path('login/', auth_views.LoginView.as_view(
+        template_name='calculator/login.html',
+        redirect_authenticated_user=True
+    ), name='login'),
+    
+    path('logout/', auth_views.LogoutView.as_view(
+        next_page='home' 
+    ), name='logout'),
+    
+    path('register/', views.register_view, name='register'),  
+    
     path('my-calculations/', views.my_calculations, name='my_calculations'),
     path('my-calculations/<int:calculation_id>/delete/', views.calculation_delete, name='calculation_delete'),
     
@@ -15,7 +28,6 @@ urlpatterns = [
     path('car/<int:car_id>/delete/', views.car_delete, name='car_delete'),
     path('car/<int:car_id>/', views.car_detail, name='car_detail'),
     
-    # API endpoints
     path('api/currency-rate/', views.api_currency_rate, name='api_currency_rate'),
     path('api/all-rates/', views.api_all_rates, name='api_all_rates'),
     path('api/car/<int:car_id>/details/', views.api_car_details, name='api_car_details'),

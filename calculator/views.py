@@ -1,11 +1,26 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login
+from django.contrib.auth.forms import UserCreationForm
 from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.db.models import Avg
 import json
+import base64
+import io
 from datetime import datetime
+from decimal import Decimal
+
+try:
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    MATPLOTLIB_AVAILABLE = True
+except ImportError:
+    MATPLOTLIB_AVAILABLE = False
+    plt = None
+
 from .models import RightHandCar, OwnershipCalculation, CostItem
 from .forms import CalculationForm, CarFilterForm, RightHandCarForm, ImportCarsForm
 
@@ -14,15 +29,41 @@ def home(request):
     popular_cars = RightHandCar.objects.all()[:6]
     total_calculations = OwnershipCalculation.objects.count()
     total_cars = RightHandCar.objects.count()
-    
+
+    try:
+        from .api_services import update_all_rates
+        rates = update_all_rates()
+    except:
+        rates = {}
+
     context = {
         'popular_cars': popular_cars,
         'total_calculations': total_calculations,
         'total_cars': total_cars,
-        'recent_calculations': OwnershipCalculation.objects.order_by('-created_at')[:3]
+        'recent_calculations': OwnershipCalculation.objects.order_by('-created_at')[:3],
+        'rates': rates,
     }
-    
+
     return render(request, 'calculator/home.html', context)
+
+
+def register_view(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+    
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, 'Регистрация прошла успешно!')
+            return redirect('home')
+        else:
+            messages.error(request, 'Исправьте ошибки в форме')
+    else:
+        form = UserCreationForm()
+    
+    return render(request, 'calculator/register.html', {'form': form})
 
 
 def car_list(request):
@@ -98,6 +139,63 @@ def calculation_create(request):
     return render(request, 'calculator/calculation_form.html', context)
 
 
+def generate_cost_chart(breakdown):
+    if not MATPLOTLIB_AVAILABLE:
+        return None
+    
+    try:
+        labels = ['Таможня', 'Адаптация', 'Страховка', 'Топливо', 'ТО', 'Налог']
+        sizes = [
+            float(breakdown.get('customs', 0)),
+            float(breakdown.get('adaptation', 0)),
+            float(breakdown.get('insurance', 0)),
+            float(breakdown.get('fuel', 0)),
+            float(breakdown.get('maintenance', 0)),
+            float(breakdown.get('tax', 0))
+        ]
+        
+        colors = ['#ff3b30', '#ff9500', '#007aff', '#34c759', '#5ac8fa', '#af52de']
+        
+        fig, ax = plt.subplots(figsize=(8, 6))
+        
+        explode = [0.1 if size == max(sizes) else 0 for size in sizes]
+        
+        wedges, texts, autotexts = ax.pie(
+            sizes,
+            labels=labels,
+            colors=colors,
+            autopct='%1.1f%%',
+            startangle=90,
+            explode=explode,
+            shadow=True,
+            textprops={'fontsize': 11, 'fontweight': 'bold'}
+        )
+        
+        for autotext in autotexts:
+            autotext.set_color('white')
+            autotext.set_fontsize(10)
+            autotext.set_fontweight('bold')
+        
+        ax.legend(wedges, labels, title="Категории расходов", loc="center left", bbox_to_anchor=(1, 0, 0.5, 1))
+        ax.axis('equal')
+        
+        buffer = io.BytesIO()
+        plt.tight_layout()
+        plt.savefig(buffer, format='png', dpi=100, bbox_inches='tight', facecolor='#f8f9fa')
+        buffer.seek(0)
+        
+        image_png = buffer.getvalue()
+        buffer.close()
+        plt.close(fig)
+        
+        graphic = base64.b64encode(image_png).decode('utf-8')
+        return f"data:image/png;base64,{graphic}"
+    
+    except Exception as e:
+        print(f"Error generating chart: {e}")
+        return None
+
+
 def calculation_result(request, calculation_id):
     calculation = get_object_or_404(OwnershipCalculation, id=calculation_id)
     
@@ -119,16 +217,16 @@ def calculation_result(request, calculation_id):
         exchange_rate = 0.6
         fuel_price = 55.5
     
-    price_rub = calculation.purchase_price_jpy * exchange_rate
-    total_cost_with_car = calculation.total_cost or 0
+    price_rub = float(calculation.purchase_price_jpy) * float(exchange_rate)
+    total_cost_with_car = float(calculation.total_cost or 0)
     
     breakdown = {
-        'customs': calculation.customs_cost or 0,
-        'adaptation': calculation.adaptation_cost or 0,
-        'insurance': calculation.insurance_cost or 0,
-        'fuel': calculation.fuel_cost or 0,
-        'maintenance': calculation.maintenance_cost or 0,
-        'tax': calculation.tax_cost or 0,
+        'customs': float(calculation.customs_cost or 0),
+        'adaptation': float(calculation.adaptation_cost or 0),
+        'insurance': float(calculation.insurance_cost or 0),
+        'fuel': float(calculation.fuel_cost or 0),
+        'maintenance': float(calculation.maintenance_cost or 0),
+        'tax': float(calculation.tax_cost or 0),
     }
     
     keys = list(breakdown.keys())
@@ -138,14 +236,25 @@ def calculation_result(request, calculation_id):
         else:
             breakdown[f'{key}_percent'] = 0
     
+    chart_image = generate_cost_chart(breakdown)
+    
+    max_percent = max([
+        breakdown.get('customs_percent', 0),
+        breakdown.get('adaptation_percent', 0),
+        breakdown.get('fuel_percent', 0),
+        breakdown.get('insurance_percent', 0),
+        breakdown.get('maintenance_percent', 0),
+        breakdown.get('tax_percent', 0)
+    ])
+    
     context = {
         'calculation': calculation,
         'car': calculation.car,
-        'total_cost': calculation.total_cost or 0,
-        'additional_costs': calculation.additional_costs or 0,
-        'per_year': (calculation.total_cost or 0) / calculation.ownership_years if calculation.total_cost else 0,
+        'total_cost': total_cost_with_car,
+        'additional_costs': float(calculation.additional_costs or 0),
+        'per_year': total_cost_with_car / float(calculation.ownership_years) if total_cost_with_car else 0,
         'price_rub': price_rub,
-        'price_jpy': calculation.purchase_price_jpy,
+        'price_jpy': float(calculation.purchase_price_jpy),
         'mileage': calculation.annual_mileage,
         'years': calculation.ownership_years,
         'region': calculation.get_region_display(),
@@ -153,6 +262,9 @@ def calculation_result(request, calculation_id):
         'cost_items': cost_items,
         'exchange_rate': exchange_rate,
         'fuel_price': fuel_price,
+        'max_percent': max_percent,
+        'chart_image': chart_image,
+        'matplotlib_available': MATPLOTLIB_AVAILABLE,
     }
     
     return render(request, 'calculator/result.html', context)
@@ -195,21 +307,21 @@ def calculate_ownership_cost(calculation, exchange_rate=0.6):
             get_russia_fuel_price
         )
         
-        price_rub = calculation.purchase_price_jpy * exchange_rate
+        price_rub = float(calculation.purchase_price_jpy) * float(exchange_rate)
         
         customs_data = calculate_customs_cost(
             calculation.purchase_price_jpy,
             calculation.car.engine_volume,
             calculation.purchase_year
         )
-        customs_cost = customs_data['total']
+        customs_cost = float(customs_data['total'])
         
         adaptation_data = calculate_adaptation_cost(
             calculation.car.engine_volume,
             calculation.region,
             calculation.purchase_year
         )
-        adaptation_cost = adaptation_data['total']
+        adaptation_cost = float(adaptation_data['total'])
         
         insurance_data = calculate_insurance_cost(
             price_rub,
@@ -217,10 +329,10 @@ def calculate_ownership_cost(calculation, exchange_rate=0.6):
             calculation.purchase_year,
             calculation.car.engine_volume
         )
-        annual_insurance = insurance_data['annual']
+        annual_insurance = float(insurance_data['annual'])
         insurance_cost = annual_insurance * calculation.ownership_years
         
-        fuel_price = get_russia_fuel_price(calculation.region)
+        fuel_price = float(get_russia_fuel_price(calculation.region))
         total_km = calculation.annual_mileage * calculation.ownership_years
         fuel_cost = (total_km / 100) * calculation.car.fuel_consumption * fuel_price
         
@@ -232,13 +344,13 @@ def calculate_ownership_cost(calculation, exchange_rate=0.6):
             calculation.region,
             calculation.ownership_years
         )
-        tax_cost = tax_data['total']
+        tax_cost = float(tax_data['total'])
         
         delivery_cost = 100000 if calculation.region == 'vladivostok' else 150000
         registration_cost = 5000
         
     except Exception as e:
-        price_rub = calculation.purchase_price_jpy * exchange_rate
+        price_rub = float(calculation.purchase_price_jpy) * float(exchange_rate)
         
         CUSTOMS_DUTY_RATE = 0.48
         RECYCLING_FEE = 20000
@@ -403,7 +515,7 @@ def car_detail(request, car_id):
     context = {
         'car': car,
         'calculations': calculations,
-        'avg_total_cost': avg_total_cost,
+        'avg_total_cost': float(avg_total_cost) if avg_total_cost else 0,
         'total_calculations': calculations.count(),
     }
     
@@ -508,26 +620,26 @@ def quick_calculate(request):
                     calculate_transport_tax
                 )
                 
-                exchange_rate = get_jpy_to_rub_rate()
-                fuel_price = get_russia_fuel_price(region)
+                exchange_rate = float(get_jpy_to_rub_rate())
+                fuel_price = float(get_russia_fuel_price(region))
                 
                 price_rub = price_jpy * exchange_rate
                 
                 customs_data = calculate_customs_cost(price_jpy, engine_volume, car_year)
-                customs_cost = customs_data['total']
+                customs_cost = float(customs_data['total'])
                 
                 adaptation_data = calculate_adaptation_cost(engine_volume, region, car_year)
-                adaptation_cost = adaptation_data['total']
+                adaptation_cost = float(adaptation_data['total'])
                 
                 insurance_data = calculate_insurance_cost(price_rub, region, car_year, engine_volume)
-                annual_insurance = insurance_data['annual']
+                annual_insurance = float(insurance_data['annual'])
                 
                 fuel_cost = calculate_fuel_cost(annual_mileage, ownership_years, fuel_price, fuel_consumption)
                 
                 maintenance_cost = calculate_maintenance_cost(car_year, engine_volume, ownership_years)
                 
                 tax_data = calculate_transport_tax(engine_volume, region, ownership_years)
-                tax_cost = tax_data['total']
+                tax_cost = float(tax_data['total'])
                 
             except Exception as e:
                 exchange_rate = 0.6

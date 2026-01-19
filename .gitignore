@@ -179,3 +179,17 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+# Database
+*.sqlite3
+*.db
+db_backup_*
+
+# Django media and static
+media/
+staticfiles/
+
+# Environment
+.env
+*.env
+.env.local
+.env.*.local
