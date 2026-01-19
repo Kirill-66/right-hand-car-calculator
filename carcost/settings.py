@@ -1,22 +1,30 @@
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+required_env_vars = ['SECRET_KEY', 'DB_NAME', 'DB_USER', 'DB_PASSWORD']
+for var in required_env_vars:
+    if not os.getenv(var):
+        raise ValueError(f"Отсутствует обязательная переменная окружения: {var}")
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-(2_lhezz@soa5gnv&be!@-n%l#k_ms7y4-8^ruk+sck--1i(df'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-change-this-in-production')
 
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'car_calculator',
-        'USER': 'root',
-        'PASSWORD': 'JDMCalculator2026',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'NAME': os.getenv('DB_NAME', 'car_calculator'),
+        'USER': os.getenv('DB_USER', 'root'),
+        'PASSWORD': os.getenv('DB_PASSWORD', ''),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '3306'),
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
             'charset': 'utf8mb4',
@@ -106,3 +114,21 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
+
+if 'PYTHONANYWHERE_DOMAIN' in os.environ:
+    DEBUG = False
+    ALLOWED_HOSTS = [os.getenv('PYTHONANYWHERE_DOMAIN'), 'www.' + os.getenv('PYTHONANYWHERE_DOMAIN')]
+    
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('PYTHONANYWHERE_DB_NAME'),
+        'USER': os.getenv('PYTHONANYWHERE_DB_USER'),
+        'PASSWORD': os.getenv('PYTHONANYWHERE_DB_PASSWORD'),
+        'HOST': os.getenv('PYTHONANYWHERE_DB_HOST', os.getenv('DB_HOST')),
+        'PORT': os.getenv('PYTHONANYWHERE_DB_PORT', os.getenv('DB_PORT')),
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            'charset': 'utf8mb4',
+            'auth_plugin': 'mysql_native_password',
+        }
+    }

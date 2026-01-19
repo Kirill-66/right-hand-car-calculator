@@ -193,3 +193,5 @@ staticfiles/
 *.env
 .env.local
 .env.*.local
+# Python bytecode
+*.pyc
